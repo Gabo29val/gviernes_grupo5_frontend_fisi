@@ -31,4 +31,9 @@
             android:name="product"
             app:argType="com.example.dsm_frontend.model.Product" />
     </fragment>
+    <fragment
+        android:id="@+id/mainCarFragment"
+        android:name="com.example.dsm_frontend.carritoModule.MainCarFragment"
+        android:label="fragment_main_car"
+        tools:layout="@layout/fragment_main_car" />
 </navigation>

@@ -17,4 +17,8 @@
     <string name="description_btn_add">Boton para añadir</string>
     <string name="txt_buscar">Buscar</string>
     <string name="hint_search">Buscar en minimarket de barrio</string>
+    <string name="bottom_navigation_item_title_inicio">Inicio</string>
+    <string name="bottom_navigation_item_title_buscar">Buscar</string>
+    <string name="bottom_navigation_item_title_mi_cuenta">Mi cuenta</string>
+    <string name="bottom_navigation_item_title_mi_carrito">Mi carrito</string>
 </resources>
