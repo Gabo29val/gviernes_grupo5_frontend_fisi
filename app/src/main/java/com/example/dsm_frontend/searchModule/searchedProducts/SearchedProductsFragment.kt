@@ -3,6 +3,7 @@ package com.example.dsm_frontend.searchModule.searchedProducts
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.FragmentSearchedProductsBinding
 import com.example.dsm_frontend.model.Product
@@ -112,9 +113,8 @@ class SearchedProductsFragment : Fragment(R.layout.fragment_searched_products),
 
     override fun onProductClick(product: Product) {
 
-        /*val action = SearchedProductsFragmentDirections
+        val action = SearchedProductsFragmentDirections
             .actionSearchedProductsFragmentToProductDetailsFragment(product)
-
-        findNavController().navigate(action)*/
+        findNavController().navigate(action)
     }
 }

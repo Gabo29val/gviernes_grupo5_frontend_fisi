@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/common_padding_middle">
+
+    <ImageButton
+        android:id="@+id/btn_add"
+        android:layout_width="@dimen/common_padding_long"
+        android:layout_height="@dimen/common_padding_long"
+        android:layout_marginStart="@dimen/common_padding_default"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/description_btn_add"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_add_circle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/primaryLightColor" />
+
+    <TextView
+        android:id="@+id/tv_cantidad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_padding_min"
+        android:text="@string/_1"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_add"
+        app:layout_constraintStart_toEndOf="@+id/btn_add"
+        app:layout_constraintTop_toTopOf="@+id/btn_add" />
+
+    <ImageButton
+        android:id="@+id/btn_remove"
+        android:layout_width="@dimen/common_padding_long"
+        android:layout_height="@dimen/common_padding_long"
+        android:layout_marginStart="@dimen/common_padding_min"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/description_btn_remove"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_remove_circle"
+        app:layout_constraintStart_toEndOf="@+id/tv_cantidad"
+        app:layout_constraintTop_toTopOf="@+id/btn_add"
+        app:tint="@color/primaryLightColor" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_padding_default"
+        android:text="@string/tv_descripción"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:textColor="@color/primaryColor"
+        app:layout_constraintStart_toStartOf="@+id/btn_add"
+        app:layout_constraintTop_toBottomOf="@+id/btn_add" />
+
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_padding_min"
+        android:layout_marginEnd="@dimen/common_padding_default"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:text="@string/tv_lorem" />
+
+    <TextView
+        android:id="@+id/label_specification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_padding_default"
+        android:text="@string/tv_especificaciones"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:textColor="@color/primaryColor"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/tv_description" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_specifications"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="@+id/tv_description"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/label_specification"
+        tools:listitem="@layout/item_specification_product" />
+
+    <TextView
+        android:id="@+id/label_tienda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_padding_default"
+        android:text="@string/label_tienda"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:textColor="@color/primaryColor"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/rv_specifications" />
+
+    <TextView
+        android:id="@+id/tv_name_store"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_padding_min"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        app:layout_constraintEnd_toEndOf="@+id/tv_description"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/label_tienda"
+        tools:text="Nombre de la tienda" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

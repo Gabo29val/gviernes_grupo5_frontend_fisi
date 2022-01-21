@@ -8,7 +8,7 @@
         android:id="@+id/mainSearchFragment"
         android:name="com.example.dsm_frontend.searchModule.search.MainSearchFragment"
         android:label="MainSearchFragment"
-        tools:layout="@layout/fragment_main_search" >
+        tools:layout="@layout/fragment_main_search">
         <action
             android:id="@+id/action_mainSearchFragment_to_searchedProductsFragment"
             app:destination="@id/searchedProductsFragment" />
@@ -17,5 +17,18 @@
         android:id="@+id/searchedProductsFragment"
         android:name="com.example.dsm_frontend.searchModule.searchedProducts.SearchedProductsFragment"
         android:label="SearchedProductsFragment"
-        tools:layout="@layout/fragment_searched_products" />
+        tools:layout="@layout/fragment_searched_products">
+        <action
+            android:id="@+id/action_searchedProductsFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/productDetailsFragment"
+        android:name="com.example.dsm_frontend.searchModule.productDetails.ProductDetailsFragment"
+        android:label="fragment_product_details"
+        tools:layout="@layout/fragment_product_details">
+        <argument
+            android:name="product"
+            app:argType="com.example.dsm_frontend.model.Product" />
+    </fragment>
 </navigation>
