@@ -1,11 +1,11 @@
-package com.example.dsm_appcliente.searchModule.search.adapter
+package com.example.dsm_frontend.searchModule.search.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.dsm_appcliente.searchModule.search.CategoriesFragment
-import com.example.dsm_appcliente.searchModule.search.StoresFragment
+import com.example.dsm_frontend.searchModule.search.CategoriesFragment
+import com.example.dsm_frontend.searchModule.search.StoresFragment
 
 class ViewPagerAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecycle): FragmentStateAdapter(supportFragmentManager, lifecycle) {
 

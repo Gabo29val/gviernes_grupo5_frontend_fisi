@@ -1,14 +1,15 @@
-package com.example.dsm_appcliente.searchModule.search
+package com.example.dsm_frontend.searchModule.search
 
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.example.dsm_appcliente.searchModule.search.adapter.ViewPagerAdapter
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.FragmentMainSearchBinding
+import com.example.dsm_frontend.searchModule.search.adapter.ViewPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainSearchFragment : Fragment(R.layout.fragment_main_search) {
@@ -34,7 +35,7 @@ class MainSearchFragment : Fragment(R.layout.fragment_main_search) {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-//                findNavController().navigate(R.id.action_mainSearchFragment_to_searchedProductsFragment)
+                findNavController().navigate(R.id.action_mainSearchFragment_to_searchedProductsFragment)
                 return false
             }
 

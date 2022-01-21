@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_product"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/common_padding_min"
+    android:layout_marginTop="@dimen/common_padding_min"
+    android:layout_marginEnd="@dimen/common_padding_min"
+    android:layout_marginBottom="@dimen/common_padding_min">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:contentDescription="@string/description_img"
+            android:id="@+id/img_photo_product"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintDimensionRatio="H,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_name_product"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_padding_min"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_photo_product"
+            tools:text="Nombre" />
+
+        <TextView
+            android:id="@+id/tv_name_store"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/common_padding_min"
+            android:textAppearance="?attr/textAppearanceSubtitle2"
+            app:layout_constraintStart_toStartOf="@+id/tv_name_product"
+            app:layout_constraintTop_toBottomOf="@+id/tv_name_product"
+            tools:text="Tienda" />
+
+        <TextView
+            android:id="@+id/tv_price_product"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_padding_default"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            app:layout_constraintStart_toStartOf="@+id/tv_name_product"
+            app:layout_constraintTop_toBottomOf="@+id/tv_name_store"
+            tools:text="S/99.99" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_padding_min"
+            android:layout_marginBottom="@dimen/common_padding_min"
+            android:contentDescription="@string/fab_add_car"
+            android:src="@drawable/ic_add_shopping_cart"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_price_product"
+            app:tint="@null" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

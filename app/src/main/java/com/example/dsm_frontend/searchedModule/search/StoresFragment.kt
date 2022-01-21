@@ -1,4 +1,4 @@
-package com.example.dsm_appcliente.searchModule.search
+package com.example.dsm_frontend.searchModule.search
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
