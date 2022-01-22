@@ -21,7 +21,6 @@ class SearchedProductsFragment : Fragment(R.layout.fragment_searched_products),
 
         mProductAdapter = ProductAdapter(getProducts(), this)
 
-
         mBinding.rvProducts.apply {
             adapter = mProductAdapter
             setHasFixedSize(true)
