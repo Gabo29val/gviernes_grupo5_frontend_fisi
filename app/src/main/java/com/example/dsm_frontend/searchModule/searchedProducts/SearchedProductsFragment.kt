@@ -1,6 +1,7 @@
 package com.example.dsm_frontend.searchModule.searchedProducts
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.navigation.fragment.findNavController
@@ -14,11 +15,13 @@ class SearchedProductsFragment : Fragment(R.layout.fragment_searched_products),
     ProductAdapter.OnProductClickListener {
     private lateinit var mBinding: FragmentSearchedProductsBinding
     private lateinit var mProductAdapter: ProductAdapter
+    private lateinit var userArrayList: ArrayList<Product>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = FragmentSearchedProductsBinding.bind(view)
 
+        userArrayList = arrayListOf()
         mProductAdapter = ProductAdapter(getProducts(), this)
 
         mBinding.rvProducts.apply {

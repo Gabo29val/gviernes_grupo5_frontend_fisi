@@ -22,4 +22,5 @@
     <string name="bottom_navigation_item_title_mi_cuenta">Mi cuenta</string>
     <string name="bottom_navigation_item_title_mi_carrito">Mi carrito</string>
     <string name="text_btn_eliminar">Quitar todo</string>
+    <string name="bottom_navigation_item_title_tiendas">Tiendas</string>
 </resources>

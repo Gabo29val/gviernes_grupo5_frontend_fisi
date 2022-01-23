@@ -9,5 +9,6 @@ data class Product(
     val price: Double = 0.0,
     val photoUrl: String = "",
     val description: String = "",
+
     val specifications: MutableList<Pair<String, String>>
 ): Serializable

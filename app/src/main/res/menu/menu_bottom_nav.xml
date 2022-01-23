@@ -9,9 +9,13 @@
         android:icon="@drawable/ic_search"
         android:title="@string/bottom_navigation_item_title_buscar" />
     <item
+        android:id="@+id/mainStoreFragment"
+        android:icon="@drawable/ic_map"
+        android:title="@string/bottom_navigation_item_title_tiendas" />
+    <!--<item
         android:id="@+id/action_account"
         android:icon="@drawable/ic_account_circle"
-        android:title="@string/bottom_navigation_item_title_mi_cuenta" />
+        android:title="@string/bottom_navigation_item_title_mi_cuenta" />-->
     <item
         android:id="@+id/mainCarFragment"
         android:icon="@drawable/ic_shopping_cart"

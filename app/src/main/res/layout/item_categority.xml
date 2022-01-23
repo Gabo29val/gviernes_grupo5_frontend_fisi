@@ -8,10 +8,13 @@
     tools:background="@color/black">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="120dp"
+        android:layout_marginHorizontal="@dimen/common_padding_min"
         android:layout_marginBottom="@dimen/common_padding_min"
-        android:layout_marginHorizontal="@dimen/common_padding_min">
+        android:clickable="true"
+        android:focusable="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,10 +26,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/common_padding_min"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:text="Categoría"
-                android:layout_marginHorizontal="@dimen/common_padding_min"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
 
             <ImageView

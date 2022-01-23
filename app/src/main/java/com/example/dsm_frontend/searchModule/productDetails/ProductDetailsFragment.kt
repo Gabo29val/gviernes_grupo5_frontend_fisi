@@ -59,10 +59,10 @@ class ProductDetailsFragment : Fragment(R.layout.fragment_product_details) {
     }
 
     private fun setupAdapterSpecification() {
-        val adaptador = SpecificationProductAdapter(arg.product.specifications)
+        /*val adaptador = SpecificationProductAdapter(arg.product.specifications)
         mBinding.details.rvSpecifications.apply {
             adapter = adaptador
             setHasFixedSize(false)
-        }
+        }*/
     }
 }
