@@ -6,14 +6,10 @@ import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.FragmentMainSearchBinding
-import com.example.dsm_frontend.searchModule.search.adapter.ViewPagerAdapter
-import com.google.android.material.tabs.TabLayoutMediator
 
 class MainSearchFragment : Fragment(R.layout.fragment_main_search) {
 
