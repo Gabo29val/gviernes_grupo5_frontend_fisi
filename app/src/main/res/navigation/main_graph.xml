@@ -6,7 +6,7 @@
     app:startDestination="@id/mainSearchFragment">
     <fragment
         android:id="@+id/mainSearchFragment"
-        android:name="com.example.dsm_frontend.searchModule.search.MainSearchFragment"
+        android:name="com.example.dsm_frontend.searchModule.mainSearch.MainSearchFragment"
         android:label="MainSearchFragment"
         tools:layout="@layout/fragment_main_search">
         <action
@@ -40,5 +40,14 @@
         android:id="@+id/mainStoreFragment"
         android:name="com.example.dsm_frontend.storeModule.MainStoreFragment"
         android:label="fragment_main_store"
-        tools:layout="@layout/fragment_main_store" />
+        tools:layout="@layout/fragment_main_store" >
+        <action
+            android:id="@+id/action_mainStoreFragment_to_searchedStoresFragment"
+            app:destination="@id/searchedStoresFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchedStoresFragment"
+        android:name="com.example.dsm_frontend.storeModule.searchedStores.SearchedStoresFragment"
+        android:label="fragment_searched_stores"
+        tools:layout="@layout/fragment_searched_stores" />
 </navigation>

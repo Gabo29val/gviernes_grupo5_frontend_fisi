@@ -6,8 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.ItemSpecificationProductBinding
+import com.example.dsm_frontend.model.Specification
 
-class SpecificationProductAdapter(val specifications: MutableList<Pair<String, String>>) :
+class SpecificationProductAdapter(val specifications: List<Specification>) :
     RecyclerView.Adapter<SpecificationProductAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,10 +26,10 @@ class SpecificationProductAdapter(val specifications: MutableList<Pair<String, S
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val binding = ItemSpecificationProductBinding.bind(view)
-        fun setData(pair: Pair<String, String>) {
+        fun setData(specification: Specification) {
             binding.apply {
-                binding.tvNameSpecification.text = pair.first
-                binding.tvValorSpecification.text = pair.second
+                binding.tvNameSpecification.text = specification.name
+                binding.tvValorSpecification.text = specification.value
             }
         }
     }
