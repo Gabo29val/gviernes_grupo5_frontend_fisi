@@ -7,6 +7,7 @@ import com.example.dsm_frontend.R
 import com.example.dsm_frontend.carritoModule.carrito.adapter.ProductCarAdapter
 import com.example.dsm_frontend.databinding.FragmentMainCarBinding
 import com.example.dsm_frontend.model.Product
+import com.example.dsm_frontend.model.Specification
 
 class MainCarFragment : Fragment(R.layout.fragment_main_car) {
 
@@ -33,11 +34,12 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
                 nameStore = "Tottus",
                 price = 99.99,
                 description = "Dentro de los licores encontramos al Whisky, una bebida alcohólica a base de malta fermentada de cereales como cebada, trigo, centeno y maíz, que se destila y añeja en barriles de madera tradicionalmente de roble blanco. Este último proceso dura por lo menos tres años para que adquiera el color caramelo que lo caracteriza. El Wisky tiene sus orígenes en Irlanda y Escocia y en la actualidad se disfruta en muchos países a nivel mundial.",
+                stock = 10,
                 specifications = mutableListOf(
-                    Pair("Presentación", "Botella"),
-                    Pair("Composición", "Grano y malta"),
-                    Pair("Proceso de añejamiento", "No declarada"),
-                    Pair("Volumen neto", "750ml"),
+                    Specification("Presentación", "Botella"),
+                    Specification("Composición", "Grano y malta"),
+                    Specification("Proceso de añejamiento", "No declarada"),
+                    Specification("Volumen neto", "750ml"),
                 )
             ),
             Product(
@@ -46,11 +48,12 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
                 nameStore = "Tottus",
                 price = 99.99,
                 description = "Dentro de los licores encontramos al Whisky, una bebida alcohólica a base de malta fermentada de cereales como cebada, trigo, centeno y maíz, que se destila y añeja en barriles de madera tradicionalmente de roble blanco. Este último proceso dura por lo menos tres años para que adquiera el color caramelo que lo caracteriza. El Wisky tiene sus orígenes en Irlanda y Escocia y en la actualidad se disfruta en muchos países a nivel mundial.",
+                stock = 10,
                 specifications = mutableListOf(
-                    Pair("Presentación", "Botella"),
-                    Pair("Composición", "Grano y malta"),
-                    Pair("Proceso de añejamiento", "No declarada"),
-                    Pair("Volumen neto", "750ml"),
+                    Specification("Presentación", "Botella"),
+                    Specification("Composición", "Grano y malta"),
+                    Specification("Proceso de añejamiento", "No declarada"),
+                    Specification("Volumen neto", "750ml"),
                 )
             ),
         )

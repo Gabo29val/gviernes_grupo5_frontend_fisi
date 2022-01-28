@@ -9,26 +9,54 @@ import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.FragmentSearchedProductsBinding
 import com.example.dsm_frontend.model.Product
 import com.example.dsm_frontend.searchModule.searchedProducts.adapter.ProductAdapter
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
 
 
 class SearchedProductsFragment : Fragment(R.layout.fragment_searched_products),
     ProductAdapter.OnProductClickListener {
     private lateinit var mBinding: FragmentSearchedProductsBinding
     private lateinit var mProductAdapter: ProductAdapter
-    private lateinit var userArrayList: ArrayList<Product>
+    private lateinit var products: ArrayList<Product>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = FragmentSearchedProductsBinding.bind(view)
 
-        userArrayList = arrayListOf()
-        mProductAdapter = ProductAdapter(getProducts(), this)
+        products = arrayListOf()
+        mProductAdapter = ProductAdapter(products, this)
 
         mBinding.rvProducts.apply {
             adapter = mProductAdapter
             setHasFixedSize(true)
         }
+
+        getProductsFirebase()
     }
+
+    private fun getProductsFirebase() {
+        val database = FirebaseDatabase.getInstance()
+        val ref = database.getReference("products")
+        ref.addValueEventListener(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    for (productSnapshot in snapshot.children){
+                        val product = productSnapshot.getValue(Product::class.java)
+                        product?.id = productSnapshot.key
+                        products.add(product!!)
+                    }
+                }
+                mBinding.rvProducts.adapter?.notifyDataSetChanged()
+            }
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+    }
+/*
 
     private fun getProducts(): List<Product> {
         return listOf(
@@ -112,6 +140,7 @@ class SearchedProductsFragment : Fragment(R.layout.fragment_searched_products),
             ),
         )
     }
+*/
 
     override fun onProductClick(product: Product) {
 

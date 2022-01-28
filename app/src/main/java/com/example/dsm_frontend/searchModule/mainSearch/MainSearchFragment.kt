@@ -1,4 +1,4 @@
-package com.example.dsm_frontend.searchModule.search
+package com.example.dsm_frontend.searchModule.mainSearch
 
 import android.os.Bundle
 import android.view.*

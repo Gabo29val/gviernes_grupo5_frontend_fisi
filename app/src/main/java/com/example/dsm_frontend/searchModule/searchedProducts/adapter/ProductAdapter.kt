@@ -3,6 +3,7 @@ package com.example.dsm_frontend.searchModule.searchedProducts.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -27,6 +28,10 @@ class ProductAdapter(val products: List<Product>, val itemClickListener: OnProdu
 
                 root.setOnClickListener {
                     itemClickListener.onProductClick(product)
+                }
+
+                fabAddCar.setOnClickListener {
+                    Toast.makeText(binding.root.context, product.id, Toast.LENGTH_SHORT).show()
                 }
             }
         }

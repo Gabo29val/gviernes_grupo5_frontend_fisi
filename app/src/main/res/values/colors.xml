@@ -11,6 +11,7 @@
     <!--Colores para la app-->
     <color name="primaryColor">#22577e</color>
     <color name="primaryLightColor">#5583ad</color>
+    <color name="fillArea">#1A5583AD</color>
     <color name="primaryDarkColor">#002e51</color>
     <color name="primaryTextColor">#ffffff</color>
     <color name="hintColor">#818181</color>

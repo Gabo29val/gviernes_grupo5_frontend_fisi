@@ -8,11 +8,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.ItemProductCardBinding
+import com.example.dsm_frontend.databinding.ItemProductCarritoBinding
 import com.example.dsm_frontend.model.Product
 
 class ProductCarAdapter(val products: List<Product>): RecyclerView.Adapter<ProductCarAdapter.ProductViewHolder>(){
     inner class ProductViewHolder(view: View): RecyclerView.ViewHolder(view){
-        val binding = ItemProductCardBinding.bind(view)
+        val binding = ItemProductCarritoBinding.bind(view)
         fun setData(product: Product){
             binding.apply {
                 tvNameProduct.text = product.name
