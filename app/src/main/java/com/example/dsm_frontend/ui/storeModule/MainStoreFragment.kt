@@ -1,4 +1,4 @@
-package com.example.dsm_frontend.storeModule
+package com.example.dsm_frontend.ui.storeModule
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -15,26 +15,28 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.dsm_frontend.R
+import com.example.dsm_frontend.api.RetrofitClient
+import com.example.dsm_frontend.core.Resource
+import com.example.dsm_frontend.data.StoreDataSource
 import com.example.dsm_frontend.databinding.FragmentMainStoreBinding
-import com.example.dsm_frontend.model.Store
+import com.example.dsm_frontend.data.model.Store
 import com.example.dsm_frontend.presentation.StoreViewModel
+import com.example.dsm_frontend.presentation.StoreViewModelFactory
+import com.example.dsm_frontend.repository.StoreRepository
+import com.example.dsm_frontend.repository.StoreRepositoryImpl
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
-import java.math.RoundingMode
 
 
 class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCallback,
@@ -42,7 +44,15 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     GoogleMap.OnMyLocationClickListener,
     GoogleMap.OnMarkerClickListener {
 
-    private lateinit var mStoreViewModel: StoreViewModel
+    private val mStoreViewModel by viewModels<StoreViewModel> {
+        StoreViewModelFactory(
+            StoreRepositoryImpl(
+                StoreDataSource(
+                    RetrofitClient.webservice
+                )
+            )
+        )
+    }
 
     private lateinit var mBinding: FragmentMainStoreBinding
     private lateinit var mMap: GoogleMap
@@ -63,19 +73,8 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        setupViewModel()
         setupComponents()
         setupSearchView()
-    }
-
-    private fun setupViewModel() {
-        mStoreViewModel = ViewModelProvider(requireActivity()).get(StoreViewModel::class.java)
-
-        //getCloseStore()
-
-        /*mStoreViewModel.getStores().observe(requireActivity(), {
-            drawMarkerStores(it)
-        })*/
     }
 
     private fun drawMarkerStores(stores: List<Store>) {
@@ -161,17 +160,13 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         if (::currentPosition.isInitialized) {
             currentPosition.let {
                 val radiusMillas = Math.round(((radius) * 0.62137) * 100.0) / 100.0
-                /*Log.d(
-                    "CONSULTA",
-                    "lat ${it!!.latitude} lon${it!!.longitude} radiusMillas: $radiusMillas"
-                )*/
-                val d = it
-                val a = it!!.latitude
-                val b = it.longitude
-                val c = radiusMillas
                 mStoreViewModel.getCloseStores(it!!.latitude, it.longitude, radiusMillas)
-                    .observe(requireActivity(), {
-                        drawMarkerStores(it)
+                    .observe(viewLifecycleOwner, { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                drawMarkerStores(result.data)
+                            }
+                        }
                     })
             }
         }
@@ -232,7 +227,6 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     //Metodo que dibuja el circulo de area
     @SuppressLint("NewApi")
     private fun drawCircularArea(latitude: Double, longitude: Double, radius: Double) {
-        //try {
         val color = mBinding.root.context.getColor(R.color.primaryColor)
         val colorFill = mBinding.root.context.getColor(R.color.fillArea)
         val circlerOptions = CircleOptions()
@@ -242,16 +236,11 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
             .fillColor(colorFill)
             .strokeWidth(3.0f)
         circle = mMap.addCircle(circlerOptions)
-        /*} catch (e: Exception) {
-            e.message?.let { Log.e("Error", it) }
-        }*/
-
     }
 
     //Metodo para convertir una drawable a mapa de bits para el icono del marcador
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
         return ContextCompat.getDrawable(context, vectorResId)?.run {
-            //setBounds(0, 0, intrinsicWidth, intrinsicHeight)
             setBounds(0, 0, 128, 128)
             val bitmap = Bitmap.createBitmap(128, 128, Bitmap.Config.ARGB_8888)
             draw(Canvas(bitmap))

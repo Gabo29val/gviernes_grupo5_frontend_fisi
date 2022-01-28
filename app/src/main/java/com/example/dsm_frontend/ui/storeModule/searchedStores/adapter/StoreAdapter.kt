@@ -1,4 +1,4 @@
-package com.example.dsm_frontend.storeModule.searchedStores.adapter
+package com.example.dsm_frontend.ui.storeModule.searchedStores.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.ItemStoreBinding
-import com.example.dsm_frontend.model.Store
+import com.example.dsm_frontend.data.model.Store
 
 class StoreAdapter(val stores: List<Store>) : RecyclerView.Adapter<StoreAdapter.ViewHolder>() {
 

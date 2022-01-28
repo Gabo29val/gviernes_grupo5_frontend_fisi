@@ -1,4 +1,4 @@
-package com.example.dsm_frontend.searchModule.productDetails.adapter
+package com.example.dsm_frontend.ui.searchModule.productDetails.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.ItemSpecificationProductBinding
-import com.example.dsm_frontend.model.Specification
+import com.example.dsm_frontend.data.model.Specification
 
 class SpecificationProductAdapter(val specifications: List<Specification>) :
     RecyclerView.Adapter<SpecificationProductAdapter.ViewHolder>() {

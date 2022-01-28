@@ -5,10 +5,10 @@ import android.os.Bundle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.dsm_frontend.databinding.ActivityMainBinding
-import com.example.dsm_frontend.model.Location
-import com.example.dsm_frontend.model.Product
-import com.example.dsm_frontend.model.Specification
-import com.example.dsm_frontend.model.Store
+import com.example.dsm_frontend.data.model.Location
+import com.example.dsm_frontend.data.model.Product
+import com.example.dsm_frontend.data.model.Specification
+import com.example.dsm_frontend.data.model.Store
 import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
