@@ -15,13 +15,14 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.FragmentMainStoreBinding
 import com.example.dsm_frontend.model.Store
+import com.example.dsm_frontend.presentation.StoreViewModel
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -38,12 +39,16 @@ import java.math.RoundingMode
 
 class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCallback,
     GoogleMap.OnMyLocationButtonClickListener,
-    GoogleMap.OnMyLocationClickListener {
+    GoogleMap.OnMyLocationClickListener,
+    GoogleMap.OnMarkerClickListener {
+
+    private lateinit var mStoreViewModel: StoreViewModel
 
     private lateinit var mBinding: FragmentMainStoreBinding
     private lateinit var mMap: GoogleMap
+    private lateinit var currentPosition: LatLng
     private var circle: Circle? = null
-    private var radius: Double = 0.25
+    private var radius: Double = 0.10
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -55,39 +60,83 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         super.onViewCreated(view, savedInstanceState)
         mBinding = FragmentMainStoreBinding.bind(view)
 
-        setupComponents()
-        setupSearchView()
-
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        generarArea()
+        setupViewModel()
+        setupComponents()
+        setupSearchView()
     }
 
-    @SuppressLint("MissingPermission")
-    private fun generarArea() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(mBinding.root.context)
-        fusedLocationClient.lastLocation.addOnSuccessListener {
-            Toast.makeText(
-                mBinding.root.context,
-                "Lat: ${it?.latitude}, Lon: ${it?.longitude} radius: $radius",
-                Toast.LENGTH_SHORT
-            ).show()
-            try {
-                if (it.latitude != null && it.longitude != null) {
-                    generarArea(it.latitude, it.longitude, radius)
-                    mMap.moveCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                            LatLng(it.latitude, it.longitude),
-                            16.5f
-                        )
-                    );
+    private fun setupViewModel() {
+        mStoreViewModel = ViewModelProvider(requireActivity()).get(StoreViewModel::class.java)
+
+        //getCloseStore()
+
+        /*mStoreViewModel.getStores().observe(requireActivity(), {
+            drawMarkerStores(it)
+        })*/
+    }
+
+    private fun drawMarkerStores(stores: List<Store>) {
+        if (::mMap.isInitialized) {
+            mMap.clear()
+            currentPosition.let {
+                currentPosition?.let { it1 ->
+                    drawCircularArea(
+                        it1.latitude,
+                        currentPosition!!.longitude,
+                        radius
+                    )
                 }
-            } catch (e: Exception) {
-                Log.e("errorrrrrr", e.message!!)
             }
 
-            //mMap.animateCamera(CameraUpdateFactory.newLatLng(LatLng(it.latitude, it.longitude)), )
+            for (store in stores) {
+                store.let {
+                    val ubi = LatLng(store.location?.latitude!!, store.location?.longitude!!)
+                    val mark = mMap.addMarker(
+                        MarkerOptions()
+                            .position(ubi)
+                            .title(store.name)
+                            .icon(
+                                bitmapDescriptorFromVector(
+                                    mBinding.root.context,
+                                    R.drawable.ic_store
+                                )
+                            )
+                    )
+                    mark?.tag = store
+
+                    /*currentPosition.let {
+                        createPolyline(
+                            mark?.position!!.latitude,
+                            mark.position.longitude,
+                            currentPosition!!.latitude,
+                            currentPosition!!.longitude
+                        )
+                    }*/
+
+                }
+            }
+        }
+    }
+
+    private fun setupComponents() {
+        mBinding.btnAplicar.setOnClickListener {
+            //aqui hace la consulta con el nuevo radio
+            getCloseStore()
+        }
+
+        mBinding.tvRatioRange.text = radius.toString()
+
+        mBinding.sliderRadius.value = radius.toFloat()
+
+        mBinding.sliderRadius.addOnChangeListener { slider, value, fromUser ->
+            val valueRed = Math.round(value.toDouble() * 100.0) / 100.0
+            mBinding.tvRatioRange.text = valueRed.toString()
+            //value.toBigDecimal().setScale(2, RoundingMode.UP).toDouble().toString()
+            radius = valueRed
+            circle?.radius = radius * 1000
         }
     }
 
@@ -107,44 +156,66 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         })
     }
 
-    private fun setupComponents() {
-        mBinding.btnAplicar.setOnClickListener {
-            //aqui hace la consulta con el nuevo radio
-        }
-
-        mBinding.tvRatioRange.text =
-            radius.toBigDecimal().setScale(2, RoundingMode.UP).toDouble().toString()
-
-        mBinding.sliderRadius.value = radius.toBigDecimal().setScale(2, RoundingMode.UP).toFloat()
-
-        mBinding.sliderRadius.addOnChangeListener { slider, value, fromUser ->
-            mBinding.tvRatioRange.text =
-                value.toBigDecimal().setScale(2, RoundingMode.UP).toDouble().toString()
-            radius = value.toDouble()
-            circle?.radius = radius * 1000
+    //metodo para solicitar tiendas cercanas
+    private fun getCloseStore() {
+        if (::currentPosition.isInitialized) {
+            currentPosition.let {
+                val radiusMillas = Math.round(((radius) * 0.62137) * 100.0) / 100.0
+                /*Log.d(
+                    "CONSULTA",
+                    "lat ${it!!.latitude} lon${it!!.longitude} radiusMillas: $radiusMillas"
+                )*/
+                val d = it
+                val a = it!!.latitude
+                val b = it.longitude
+                val c = radiusMillas
+                mStoreViewModel.getCloseStores(it!!.latitude, it.longitude, radiusMillas)
+                    .observe(requireActivity(), {
+                        drawMarkerStores(it)
+                    })
+            }
         }
     }
 
+
+    //metodo que pide ultima ubicacion registrada del dispositivo
+    @SuppressLint("MissingPermission")
+    private fun getCurrentLocation() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(mBinding.root.context)
+        fusedLocationClient.lastLocation.addOnSuccessListener {
+            try {
+                drawCircularArea(it.latitude, it.longitude, radius)
+                currentPosition = LatLng(it.latitude, it.longitude)
+                Log.d(
+                    "CURRENT",
+                    "lat ${it.latitude} lon${it.longitude}"
+                )
+                mMap.moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        LatLng(it.latitude, it.longitude),
+                        16.5f
+                    )
+                );
+            } catch (e: Exception) {
+                Log.e("error", e.message!!)
+            }
+        }
+    }
+
+    //metodo que se ejecuta cuando el mapa está cargado
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
-        generarMarcadores()
-        //createPolyline()
-
         mMap.setOnMyLocationButtonClickListener(this)
         mMap.setOnMyLocationClickListener(this)
-        mMap.setOnMarkerClickListener {
-            Toast.makeText(mBinding.root.context, it.title, Toast.LENGTH_SHORT).show()
-            //mBinding.cardInfoStore.tvNameStore.text = it.title
-            setStoreData(it.tag as Store)
-            mBinding.cardInfoStore.card.visibility = View.VISIBLE
-            false
-        }
-
+        mMap.setOnMarkerClickListener(this)
 
         enableLocation()
+        getCurrentLocation()
+        //generarMarcadores()
+        getCloseStore()
     }
 
+    //metodo para cargar info de la tienda en el cardview
     private fun setStoreData(store: Store) {
         mBinding.cardInfoStore.apply {
             tvNameStore.text = store.name
@@ -158,10 +229,12 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         }
     }
 
+    //Metodo que dibuja el circulo de area
     @SuppressLint("NewApi")
-    private fun generarArea(latitude: Double, longitude: Double, radius: Double) {
-        val color = requireContext().getColor(R.color.primaryColor)
-        val colorFill = requireContext().getColor(R.color.fillArea)
+    private fun drawCircularArea(latitude: Double, longitude: Double, radius: Double) {
+        //try {
+        val color = mBinding.root.context.getColor(R.color.primaryColor)
+        val colorFill = mBinding.root.context.getColor(R.color.fillArea)
         val circlerOptions = CircleOptions()
             .center(LatLng(latitude, longitude))
             .radius(radius * 1000)
@@ -169,8 +242,13 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
             .fillColor(colorFill)
             .strokeWidth(3.0f)
         circle = mMap.addCircle(circlerOptions)
+        /*} catch (e: Exception) {
+            e.message?.let { Log.e("Error", it) }
+        }*/
+
     }
 
+    //Metodo para convertir una drawable a mapa de bits para el icono del marcador
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
         return ContextCompat.getDrawable(context, vectorResId)?.run {
             //setBounds(0, 0, intrinsicWidth, intrinsicHeight)
@@ -181,39 +259,17 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         }
     }
 
-    private fun generarMarcadores() {
-        val database = FirebaseDatabase.getInstance()
-        val ref = database.getReference("stores")
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    for (storeSnapshot in snapshot.children) {
-                        val store = storeSnapshot.getValue(Store::class.java)
-                        Log.d("stores", "store: " + store.toString())
-                        store?.location?.let {
-                            val ubi = LatLng(it.latitude!!, it.longitude!!)
-                            val mark = mMap.addMarker(
-                                MarkerOptions()
-                                    .position(ubi)
-                                    .title(store.name)
-                                    .icon(
-                                        bitmapDescriptorFromVector(
-                                            mBinding.root.context,
-                                            R.drawable.ic_store
-                                        )
-                                    )
-                            )
-                            mark?.tag = store
-                        }
-                    }
-                }
-            }
+    private fun createPolyline(lat1: Double, lon1: Double, lat2: Double, lon2: Double) {
+        val polylineOptions = PolylineOptions()
+            .add(LatLng(lat1, lon1))
+            .add(LatLng(lat2, lon2))
 
-            override fun onCancelled(error: DatabaseError) {
-            }
-        })
+        val polyline = mMap.addPolyline(polylineOptions)
     }
 
+    /**
+     * Métodos para confirmar los permisos de localización
+     */
     private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(
         this.requireContext(),
         Manifest.permission.ACCESS_FINE_LOCATION
@@ -253,14 +309,6 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         }
     }
 
-    private fun createPolyline() {
-        val polylineOptions = PolylineOptions()
-            .add(LatLng(-11.976423, -76.907949))
-            .add(LatLng(-11.976376, -76.908973))
-
-        val polyline = mMap.addPolyline(polylineOptions)
-    }
-
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -296,5 +344,12 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
 
     override fun onMyLocationClick(p0: Location) {
         //
+    }
+
+    override fun onMarkerClick(p0: Marker): Boolean {
+        Toast.makeText(mBinding.root.context, p0.title, Toast.LENGTH_SHORT).show()
+        setStoreData(p0.tag as Store)
+        mBinding.cardInfoStore.card.visibility = View.VISIBLE
+        return false
     }
 }
