@@ -6,7 +6,7 @@
     app:startDestination="@id/mainSearchFragment">
     <fragment
         android:id="@+id/mainSearchFragment"
-        android:name="com.example.dsm_frontend.searchModule.mainSearch.MainSearchFragment"
+        android:name="com.example.dsm_frontend.ui.searchModule.mainSearch.MainSearchFragment"
         android:label="MainSearchFragment"
         tools:layout="@layout/fragment_main_search">
         <action
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchedProductsFragment"
-        android:name="com.example.dsm_frontend.searchModule.searchedProducts.SearchedProductsFragment"
+        android:name="com.example.dsm_frontend.ui.searchModule.searchedProducts.SearchedProductsFragment"
         android:label="SearchedProductsFragment"
         tools:layout="@layout/fragment_searched_products">
         <action
@@ -24,21 +24,21 @@
     </fragment>
     <fragment
         android:id="@+id/productDetailsFragment"
-        android:name="com.example.dsm_frontend.searchModule.productDetails.ProductDetailsFragment"
+        android:name="com.example.dsm_frontend.ui.searchModule.productDetails.ProductDetailsFragment"
         android:label="fragment_product_details"
         tools:layout="@layout/fragment_product_details">
         <argument
             android:name="product"
-            app:argType="com.example.dsm_frontend.model.Product" />
+            app:argType="com.example.dsm_frontend.data.model.Product" />
     </fragment>
     <fragment
         android:id="@+id/mainCarFragment"
-        android:name="com.example.dsm_frontend.carritoModule.carrito.MainCarFragment"
+        android:name="com.example.dsm_frontend.ui.carModule.carrito.MainCarFragment"
         android:label="fragment_main_car"
         tools:layout="@layout/fragment_main_car" />
     <fragment
         android:id="@+id/mainStoreFragment"
-        android:name="com.example.dsm_frontend.storeModule.MainStoreFragment"
+        android:name="com.example.dsm_frontend.ui.storeModule.MainStoreFragment"
         android:label="fragment_main_store"
         tools:layout="@layout/fragment_main_store" >
         <action
@@ -47,7 +47,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchedStoresFragment"
-        android:name="com.example.dsm_frontend.storeModule.searchedStores.SearchedStoresFragment"
+        android:name="com.example.dsm_frontend.ui.storeModule.searchedStores.SearchedStoresFragment"
         android:label="fragment_searched_stores"
         tools:layout="@layout/fragment_searched_stores" />
 </navigation>

@@ -1,13 +1,13 @@
-package com.example.dsm_frontend.carritoModule.carrito
+package com.example.dsm_frontend.ui.carModule.carrito
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import com.example.dsm_frontend.R
-import com.example.dsm_frontend.carritoModule.carrito.adapter.ProductCarAdapter
+import com.example.dsm_frontend.ui.carModule.carrito.adapter.ProductCarAdapter
 import com.example.dsm_frontend.databinding.FragmentMainCarBinding
-import com.example.dsm_frontend.model.Product
-import com.example.dsm_frontend.model.Specification
+import com.example.dsm_frontend.data.model.Product
+import com.example.dsm_frontend.data.model.Specification
 
 class MainCarFragment : Fragment(R.layout.fragment_main_car) {
 

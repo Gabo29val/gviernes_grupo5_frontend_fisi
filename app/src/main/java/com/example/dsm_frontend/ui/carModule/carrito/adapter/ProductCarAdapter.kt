@@ -1,4 +1,4 @@
-package com.example.dsm_frontend.carritoModule.carrito.adapter
+package com.example.dsm_frontend.ui.carModule.carrito.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,9 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.dsm_frontend.R
-import com.example.dsm_frontend.databinding.ItemProductCardBinding
 import com.example.dsm_frontend.databinding.ItemProductCarritoBinding
-import com.example.dsm_frontend.model.Product
+import com.example.dsm_frontend.data.model.Product
 
 class ProductCarAdapter(val products: List<Product>): RecyclerView.Adapter<ProductCarAdapter.ProductViewHolder>(){
     inner class ProductViewHolder(view: View): RecyclerView.ViewHolder(view){

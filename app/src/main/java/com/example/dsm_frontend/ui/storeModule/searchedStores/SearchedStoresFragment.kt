@@ -1,12 +1,12 @@
-package com.example.dsm_frontend.storeModule.searchedStores
+package com.example.dsm_frontend.ui.storeModule.searchedStores
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.FragmentSearchedStoresBinding
-import com.example.dsm_frontend.model.Store
-import com.example.dsm_frontend.storeModule.searchedStores.adapter.StoreAdapter
+import com.example.dsm_frontend.data.model.Store
+import com.example.dsm_frontend.ui.storeModule.searchedStores.adapter.StoreAdapter
 
 class SearchedStoresFragment : Fragment(R.layout.fragment_searched_stores) {
 

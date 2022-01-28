@@ -1,18 +1,16 @@
-package com.example.dsm_frontend.searchModule.productDetails
+package com.example.dsm_frontend.ui.searchModule.productDetails
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
-import android.widget.Toast
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.DialogAddCarBinding
 import com.example.dsm_frontend.databinding.FragmentProductDetailsBinding
-import com.example.dsm_frontend.searchModule.productDetails.adapter.SpecificationProductAdapter
+import com.example.dsm_frontend.ui.searchModule.productDetails.adapter.SpecificationProductAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
 
 class ProductDetailsFragment : Fragment(R.layout.fragment_product_details) {
 
