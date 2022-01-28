@@ -10,13 +10,6 @@ interface APIService {
     @GET("all")
     suspend fun getAllStores(): List<Store>
 
-    /*@GET("stores/{lat},{lon},{radius}")
-    fun getCloseStores(
-        @Path("lat") lat: Double,
-        @Path("lon") lon: Double,
-        @Path("radius") radius: Double
-    ): Call<List<Store>>*/
-
     @GET("stores/{lat},{lon},{radius}")
     suspend fun getCloseStores(
         @Path("lat") lat: Double,

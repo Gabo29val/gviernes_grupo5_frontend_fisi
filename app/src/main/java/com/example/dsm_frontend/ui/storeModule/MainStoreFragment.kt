@@ -16,7 +16,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -28,7 +27,6 @@ import com.example.dsm_frontend.databinding.FragmentMainStoreBinding
 import com.example.dsm_frontend.data.model.Store
 import com.example.dsm_frontend.presentation.StoreViewModel
 import com.example.dsm_frontend.presentation.StoreViewModelFactory
-import com.example.dsm_frontend.repository.StoreRepository
 import com.example.dsm_frontend.repository.StoreRepositoryImpl
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -48,7 +46,7 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         StoreViewModelFactory(
             StoreRepositoryImpl(
                 StoreDataSource(
-                    RetrofitClient.webservice
+                    RetrofitClient.apiService
                 )
             )
         )
@@ -58,7 +56,7 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     private lateinit var mMap: GoogleMap
     private lateinit var currentPosition: LatLng
     private var circle: Circle? = null
-    private var radius: Double = 0.10
+    private var radius: Double = 0.10 //EN KM
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -105,19 +103,21 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
                             )
                     )
                     mark?.tag = store
-
-                    /*currentPosition.let {
-                        createPolyline(
-                            mark?.position!!.latitude,
-                            mark.position.longitude,
-                            currentPosition!!.latitude,
-                            currentPosition!!.longitude
-                        )
-                    }*/
-
                 }
             }
         }
+    }
+
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val currentLocation = Location("Punto 1")
+        currentLocation.latitude = lat1
+        currentLocation.longitude = lon1
+        val storeLocation = Location("Punto 2")
+        storeLocation.latitude = lat2
+        storeLocation.longitude = lon2
+        return (Math.round(
+            (currentLocation.distanceTo(storeLocation).toDouble() / 1000) * 100.0
+        ) / 100.0)
     }
 
     private fun setupComponents() {
@@ -133,7 +133,6 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         mBinding.sliderRadius.addOnChangeListener { slider, value, fromUser ->
             val valueRed = Math.round(value.toDouble() * 100.0) / 100.0
             mBinding.tvRatioRange.text = valueRed.toString()
-            //value.toBigDecimal().setScale(2, RoundingMode.UP).toDouble().toString()
             radius = valueRed
             circle?.radius = radius * 1000
         }
@@ -163,8 +162,27 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
                 mStoreViewModel.getCloseStores(it!!.latitude, it.longitude, radiusMillas)
                     .observe(viewLifecycleOwner, { result ->
                         when (result) {
+                            is Resource.Loading -> {
+                                mBinding.progressBar.visibility = View.VISIBLE
+                            }
                             is Resource.Success -> {
+                                if (result.data.isEmpty()) {
+                                    Toast.makeText(
+                                        mBinding.root.context,
+                                        getString(R.string.info_not_close_stores),
+                                        Toast.LENGTH_LONG
+                                    ).show();
+                                }
+                                mBinding.progressBar.visibility = View.GONE
                                 drawMarkerStores(result.data)
+                            }
+                            is Resource.Failure -> {
+                                Toast.makeText(
+                                    mBinding.root.context, getString(R.string.info_not_time_service),
+                                    Toast.LENGTH_LONG
+                                ).show();
+                                drawMarkerStores(listOf())
+                                mBinding.progressBar.visibility = View.GONE
                             }
                         }
                     })
@@ -221,6 +239,13 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
                 .into(imgPhotoStore)
+
+            tvDistance.text = calculateDistance(
+                currentPosition.latitude,
+                currentPosition.longitude,
+                store.location?.latitude!!,
+                store.location?.longitude!!
+            ).toString()
         }
     }
 
@@ -328,6 +353,12 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
 
     override fun onMyLocationButtonClick(): Boolean {
         //Toast.makeText(mBinding.root.context, "Ahhh mi localizacion", Toast.LENGTH_SHORT).show()
+        //calcular posicion actual
+        // mover el circulo
+        getCurrentLocation()
+        if (::currentPosition.isInitialized) {
+            circle?.remove()
+        }
         return false
     }
 
