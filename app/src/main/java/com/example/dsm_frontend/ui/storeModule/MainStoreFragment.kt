@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.dsm_frontend.R
+import com.example.dsm_frontend.api.Maps
 import com.example.dsm_frontend.api.RetrofitClient
 import com.example.dsm_frontend.core.Resource
 import com.example.dsm_frontend.data.StoreDataSource
@@ -33,6 +34,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 
@@ -54,25 +57,53 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
 
     private lateinit var mBinding: FragmentMainStoreBinding
     private lateinit var mMap: GoogleMap
-    private lateinit var currentPosition: LatLng
+    private var currentPosition: Location? = null
     private var circle: Circle? = null
     private var radius: Double = 0.10 //EN KM
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var mFusedLocationClient: FusedLocationProviderClient? = null
 
     companion object {
         const val REQUEST_CODE_LOCATION = 0
     }
 
+    // Location classes
+    private var mTrackingLocation = true
+    private var myLocation: Location? = null
+    private var mLocationCallback: LocationCallback? = null
+    private val TRACKING_LOCATION_KEY = "tracking_location"
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = FragmentMainStoreBinding.bind(view)
+        // Restore the state if the activity is recreated.
+        if (savedInstanceState != null) {
+            mTrackingLocation = savedInstanceState.getBoolean(TRACKING_LOCATION_KEY)
+        }
 
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-
+        getInitialCurrentPosition()
         setupComponents()
         setupSearchView()
+    }
+
+    @SuppressLint("MissingPermission")
+    fun getInitialCurrentPosition() {
+        mFusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(mBinding.root.context)
+        mFusedLocationClient!!.lastLocation.addOnSuccessListener {
+
+            currentPosition = it
+            cargarMapa()
+            //drawCircularArea(it.latitude, it.longitude, radius)
+            //currentPosition = LatLng(it.latitude, it.longitude)
+        }
+    }
+
+    //Metodo para cargar el mapa en el fragmento
+    fun cargarMapa() {
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
     }
 
     private fun drawMarkerStores(stores: List<Store>) {
@@ -108,19 +139,10 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         }
     }
 
-    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-        val currentLocation = Location("Punto 1")
-        currentLocation.latitude = lat1
-        currentLocation.longitude = lon1
-        val storeLocation = Location("Punto 2")
-        storeLocation.latitude = lat2
-        storeLocation.longitude = lon2
-        return (Math.round(
-            (currentLocation.distanceTo(storeLocation).toDouble() / 1000) * 100.0
-        ) / 100.0)
-    }
-
+    //metodo para inicializar valores de componentes
     private fun setupComponents() {
+        mBinding.frameInfoTienda.visibility = View.GONE
+
         mBinding.btnAplicar.setOnClickListener {
             //aqui hace la consulta con el nuevo radio
             getCloseStore()
@@ -138,6 +160,7 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         }
     }
 
+    //metodo para setear el serachview
     private fun setupSearchView() {
         val item = mBinding.toolbar.menu.findItem(R.id.action_search)
         val searchView: SearchView = item.actionView as SearchView
@@ -156,7 +179,8 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
 
     //metodo para solicitar tiendas cercanas
     private fun getCloseStore() {
-        if (::currentPosition.isInitialized) {
+       // if (::currentPosition.isInitialized) {
+        currentPosition?.let {
             currentPosition.let {
                 val radiusMillas = Math.round(((radius) * 0.62137) * 100.0) / 100.0
                 mStoreViewModel.getCloseStores(it!!.latitude, it.longitude, radiusMillas)
@@ -178,7 +202,8 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
                             }
                             is Resource.Failure -> {
                                 Toast.makeText(
-                                    mBinding.root.context, getString(R.string.info_not_time_service),
+                                    mBinding.root.context,
+                                    getString(R.string.info_not_time_service),
                                     Toast.LENGTH_LONG
                                 ).show();
                                 drawMarkerStores(listOf())
@@ -194,24 +219,25 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     //metodo que pide ultima ubicacion registrada del dispositivo
     @SuppressLint("MissingPermission")
     private fun getCurrentLocation() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(mBinding.root.context)
-        fusedLocationClient.lastLocation.addOnSuccessListener {
-            try {
-                drawCircularArea(it.latitude, it.longitude, radius)
-                currentPosition = LatLng(it.latitude, it.longitude)
-                Log.d(
-                    "CURRENT",
-                    "lat ${it.latitude} lon${it.longitude}"
+        mFusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(mBinding.root.context)
+        mFusedLocationClient!!.lastLocation.addOnSuccessListener {
+
+            drawCircularArea(it.latitude, it.longitude, radius)
+            currentPosition = it
+
+            Log.d(
+                "CURRENT",
+                "lat ${it.latitude} lon${it.longitude}"
+            )
+            mMap.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(it.latitude, it.longitude),
+                    16.5f
                 )
-                mMap.moveCamera(
-                    CameraUpdateFactory.newLatLngZoom(
-                        LatLng(it.latitude, it.longitude),
-                        16.5f
-                    )
-                );
-            } catch (e: Exception) {
-                Log.e("error", e.message!!)
-            }
+            );
+
+
         }
     }
 
@@ -222,10 +248,20 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         mMap.setOnMyLocationClickListener(this)
         mMap.setOnMarkerClickListener(this)
 
+        currentPosition?.let {
+            mMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(it.latitude, it.longitude),
+                    16.5f
+                )
+            );
+            drawCircularArea(it.latitude, it.longitude, radius)
+        }
+
         enableLocation()
-        getCurrentLocation()
+        //getCurrentLocation()
         //generarMarcadores()
-        getCloseStore()
+        //getCloseStore()
     }
 
     //metodo para cargar info de la tienda en el cardview
@@ -240,12 +276,15 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
                 .centerCrop()
                 .into(imgPhotoStore)
 
-            tvDistance.text = calculateDistance(
-                currentPosition.latitude,
-                currentPosition.longitude,
-                store.location?.latitude!!,
-                store.location?.longitude!!
-            ).toString()
+            currentPosition?.let {
+                tvDistance.text = Maps.calculateDistanceKm(
+                    it.latitude,
+                    it.longitude,
+                    store.location?.latitude!!,
+                    store.location?.longitude!!
+                ).toString()
+            }
+
         }
     }
 
@@ -356,7 +395,8 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         //calcular posicion actual
         // mover el circulo
         getCurrentLocation()
-        if (::currentPosition.isInitialized) {
+        //if (::currentPosition.isInitialized) {
+        currentPosition?.let {
             circle?.remove()
         }
         return false
@@ -369,7 +409,7 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     override fun onMarkerClick(p0: Marker): Boolean {
         Toast.makeText(mBinding.root.context, p0.title, Toast.LENGTH_SHORT).show()
         setStoreData(p0.tag as Store)
-        mBinding.cardInfoStore.card.visibility = View.VISIBLE
+        mBinding.frameInfoTienda.visibility = View.VISIBLE
         return false
     }
 }
