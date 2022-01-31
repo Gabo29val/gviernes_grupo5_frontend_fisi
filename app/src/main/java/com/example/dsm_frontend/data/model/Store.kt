@@ -1,4 +1,4 @@
-package com.example.dsm_frontend.model
+package com.example.dsm_frontend.data.model
 
 data class Store(
     var id: String? = null,

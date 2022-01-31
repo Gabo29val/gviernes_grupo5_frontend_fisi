@@ -1,4 +1,4 @@
-package com.example.dsm_frontend.searchModule.searchedProducts.adapter
+package com.example.dsm_frontend.ui.searchModule.searchedProducts.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.ItemProductCardBinding
-import com.example.dsm_frontend.model.Product
+import com.example.dsm_frontend.data.model.Product
 
 class ProductAdapter(val products: List<Product>, val itemClickListener: OnProductClickListener) :
     RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {

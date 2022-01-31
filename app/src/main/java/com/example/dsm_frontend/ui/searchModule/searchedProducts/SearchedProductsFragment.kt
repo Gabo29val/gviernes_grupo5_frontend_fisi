@@ -1,19 +1,17 @@
-package com.example.dsm_frontend.searchModule.searchedProducts
+package com.example.dsm_frontend.ui.searchModule.searchedProducts
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.FragmentSearchedProductsBinding
-import com.example.dsm_frontend.model.Product
-import com.example.dsm_frontend.searchModule.searchedProducts.adapter.ProductAdapter
+import com.example.dsm_frontend.data.model.Product
+import com.example.dsm_frontend.ui.searchModule.searchedProducts.adapter.ProductAdapter
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.ktx.Firebase
 
 
 class SearchedProductsFragment : Fragment(R.layout.fragment_searched_products),
