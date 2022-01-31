@@ -103,7 +103,6 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         if (!::mMap.isInitialized) {
             loadMap()
         } else {
-            Toast.makeText(mBinding.root.context, "MAPA INICIALIZADO", Toast.LENGTH_SHORT).show()
             removeAllMarkers()
             for (store in stores) {
                 store.let {
@@ -230,7 +229,7 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         mFusedLocationClient!!.lastLocation.addOnSuccessListener {
 
             //Actualizamos el area circular
-            drawCircularArea()
+            //drawCircularArea()
             currentPosition = it
 
             Log.d(
@@ -305,6 +304,7 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
      * */
     @SuppressLint("NewApi")
     private fun drawCircularArea() {
+        circle?.remove()
         val radius = mStoreViewModel.radiusLD.value ?: 0.0
         currentPosition?.let {
             val color = mBinding.root.context.getColor(R.color.primaryColor)
