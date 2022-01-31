@@ -15,8 +15,8 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.dsm_frontend.R
@@ -34,8 +34,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 
@@ -45,7 +43,7 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     GoogleMap.OnMyLocationClickListener,
     GoogleMap.OnMarkerClickListener {
 
-    private val mStoreViewModel by viewModels<StoreViewModel> {
+    private val mStoreViewModel by navGraphViewModels<StoreViewModel>(R.id.main_graph) {
         StoreViewModelFactory(
             StoreRepositoryImpl(
                 StoreDataSource(
@@ -59,7 +57,8 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     private lateinit var mMap: GoogleMap
     private var currentPosition: Location? = null
     private var circle: Circle? = null
-    private var radius: Double = 0.10 //EN KM
+    private val allMarkers = ArrayList<Marker>()
+    //private var radius: Double = 0.10 //EN KM
 
     private var mFusedLocationClient: FusedLocationProviderClient? = null
 
@@ -67,58 +66,45 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         const val REQUEST_CODE_LOCATION = 0
     }
 
-    // Location classes
-    private var mTrackingLocation = true
-    private var myLocation: Location? = null
-    private var mLocationCallback: LocationCallback? = null
-    private val TRACKING_LOCATION_KEY = "tracking_location"
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = FragmentMainStoreBinding.bind(view)
-        // Restore the state if the activity is recreated.
-        if (savedInstanceState != null) {
-            mTrackingLocation = savedInstanceState.getBoolean(TRACKING_LOCATION_KEY)
-        }
-
         getInitialCurrentPosition()
         setupComponents()
         setupSearchView()
     }
 
+    /**
+     * Metodo para pedir la ubicacion actual inicial del dispositivo
+     * */
     @SuppressLint("MissingPermission")
     fun getInitialCurrentPosition() {
         mFusedLocationClient =
             LocationServices.getFusedLocationProviderClient(mBinding.root.context)
         mFusedLocationClient!!.lastLocation.addOnSuccessListener {
-
             currentPosition = it
-            cargarMapa()
-            //drawCircularArea(it.latitude, it.longitude, radius)
-            //currentPosition = LatLng(it.latitude, it.longitude)
+            loadMap()
         }
     }
 
-    //Metodo para cargar el mapa en el fragmento
-    fun cargarMapa() {
+    /**
+     * Metodo para cargar el mapa en el fragmento
+     * */
+    fun loadMap() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 
+    /**
+     * Metodo para dibujar marcadores
+     * @param stores: lista de tiendas
+     * */
     private fun drawMarkerStores(stores: List<Store>) {
-        if (::mMap.isInitialized) {
-            mMap.clear()
-            currentPosition.let {
-                currentPosition?.let { it1 ->
-                    drawCircularArea(
-                        it1.latitude,
-                        currentPosition!!.longitude,
-                        radius
-                    )
-                }
-            }
-
+        if (!::mMap.isInitialized) {
+            loadMap()
+        } else {
+            Toast.makeText(mBinding.root.context, "MAPA INICIALIZADO", Toast.LENGTH_SHORT).show()
+            removeAllMarkers()
             for (store in stores) {
                 store.let {
                     val ubi = LatLng(store.location?.latitude!!, store.location?.longitude!!)
@@ -133,13 +119,27 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
                                 )
                             )
                     )
-                    mark?.tag = store
+                    mark?.let {
+                        it.tag = store
+                        allMarkers.add(it)
+                    }
                 }
             }
         }
+
+
     }
 
-    //metodo para inicializar valores de componentes
+    private fun removeAllMarkers() {
+        for (marker in allMarkers) {
+            marker.remove()
+        }
+        allMarkers.clear()
+    }
+
+    /**
+     * Metodo para inicializar valores de componentes
+     * */
     private fun setupComponents() {
         mBinding.frameInfoTienda.visibility = View.GONE
 
@@ -148,19 +148,23 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
             getCloseStore()
         }
 
-        mBinding.tvRatioRange.text = radius.toString()
+        //Si el radio es modificado se ejecuta el bloque
+        mStoreViewModel.radiusLD.observe(viewLifecycleOwner, {
+            mBinding.tvRatioRange.text = it.toString()
+            mBinding.sliderRadius.value = it.toFloat()
+            circle?.radius = it * 1000
+        })
 
-        mBinding.sliderRadius.value = radius.toFloat()
-
+        //El deslizador modifica el radio
         mBinding.sliderRadius.addOnChangeListener { slider, value, fromUser ->
             val valueRed = Math.round(value.toDouble() * 100.0) / 100.0
-            mBinding.tvRatioRange.text = valueRed.toString()
-            radius = valueRed
-            circle?.radius = radius * 1000
+            mStoreViewModel.setRadius(valueRed)
         }
     }
 
-    //metodo para setear el serachview
+    /**
+     * Metodo para setear el serachview
+     * */
     private fun setupSearchView() {
         val item = mBinding.toolbar.menu.findItem(R.id.action_search)
         val searchView: SearchView = item.actionView as SearchView
@@ -177,53 +181,56 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         })
     }
 
-    //metodo para solicitar tiendas cercanas
+    /**
+     * Metodo que solicita las tiendas cercanas al viewmodel y
+     * modifica al mismo con el resultado
+     * */
     private fun getCloseStore() {
-       // if (::currentPosition.isInitialized) {
         currentPosition?.let {
-            currentPosition.let {
-                val radiusMillas = Math.round(((radius) * 0.62137) * 100.0) / 100.0
-                mStoreViewModel.getCloseStores(it!!.latitude, it.longitude, radiusMillas)
-                    .observe(viewLifecycleOwner, { result ->
-                        when (result) {
-                            is Resource.Loading -> {
-                                mBinding.progressBar.visibility = View.VISIBLE
-                            }
-                            is Resource.Success -> {
-                                if (result.data.isEmpty()) {
-                                    Toast.makeText(
-                                        mBinding.root.context,
-                                        getString(R.string.info_not_close_stores),
-                                        Toast.LENGTH_LONG
-                                    ).show();
-                                }
-                                mBinding.progressBar.visibility = View.GONE
-                                drawMarkerStores(result.data)
-                            }
-                            is Resource.Failure -> {
+            mStoreViewModel.getCloseStores(it.latitude, it.longitude)
+                .observe(viewLifecycleOwner, { result ->
+                    when (result) {
+                        is Resource.Loading -> {
+                            mBinding.progressBar.visibility = View.VISIBLE
+                        }
+                        is Resource.Success -> {
+                            if (result.data.isEmpty()) {
                                 Toast.makeText(
                                     mBinding.root.context,
-                                    getString(R.string.info_not_time_service),
+                                    getString(R.string.info_not_close_stores),
                                     Toast.LENGTH_LONG
                                 ).show();
-                                drawMarkerStores(listOf())
-                                mBinding.progressBar.visibility = View.GONE
                             }
+                            mBinding.progressBar.visibility = View.GONE
+                            mStoreViewModel.updateStores(result.data)
+                            //ya no es necesario pintar los marcadores
+                            //drawMarkerStores(result.data)
                         }
-                    })
-            }
+                        is Resource.Failure -> {
+                            Toast.makeText(
+                                mBinding.root.context,
+                                getString(R.string.info_not_time_service),
+                                Toast.LENGTH_LONG
+                            ).show();
+                            drawMarkerStores(listOf())
+                            mBinding.progressBar.visibility = View.GONE
+                        }
+                    }
+                })
         }
     }
 
-
-    //metodo que pide ultima ubicacion registrada del dispositivo
+    /**
+     * Metodo que pide ultima ubicacion registrada del dispositivo
+     * */
     @SuppressLint("MissingPermission")
     private fun getCurrentLocation() {
         mFusedLocationClient =
             LocationServices.getFusedLocationProviderClient(mBinding.root.context)
         mFusedLocationClient!!.lastLocation.addOnSuccessListener {
 
-            drawCircularArea(it.latitude, it.longitude, radius)
+            //Actualizamos el area circular
+            drawCircularArea()
             currentPosition = it
 
             Log.d(
@@ -236,12 +243,13 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
                     16.5f
                 )
             );
-
-
         }
     }
 
-    //metodo que se ejecuta cuando el mapa está cargado
+    /**
+     * metodo que se ejecuta cuando el mapa está cargado en el fragment
+     * Es decir cuando se llama a cargarMapa()
+     * */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap.setOnMyLocationButtonClickListener(this)
@@ -255,16 +263,20 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
                     16.5f
                 )
             );
-            drawCircularArea(it.latitude, it.longitude, radius)
+            drawCircularArea()
         }
 
         enableLocation()
-        //getCurrentLocation()
-        //generarMarcadores()
-        //getCloseStore()
+
+        mStoreViewModel.closeStoresLD.observe(viewLifecycleOwner, {
+            drawMarkerStores(it)
+        })
     }
 
-    //metodo para cargar info de la tienda en el cardview
+    /**
+     * Metodo para cargar info de la tienda en el cardview
+     * @param store: contiene los datos de una tienda
+     */
     private fun setStoreData(store: Store) {
         mBinding.cardInfoStore.apply {
             tvNameStore.text = store.name
@@ -288,21 +300,31 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         }
     }
 
-    //Metodo que dibuja el circulo de area
+    /**
+     * Metodo que dibuja el circulo de area
+     * */
     @SuppressLint("NewApi")
-    private fun drawCircularArea(latitude: Double, longitude: Double, radius: Double) {
-        val color = mBinding.root.context.getColor(R.color.primaryColor)
-        val colorFill = mBinding.root.context.getColor(R.color.fillArea)
-        val circlerOptions = CircleOptions()
-            .center(LatLng(latitude, longitude))
-            .radius(radius * 1000)
-            .strokeColor(color)
-            .fillColor(colorFill)
-            .strokeWidth(3.0f)
-        circle = mMap.addCircle(circlerOptions)
+    private fun drawCircularArea() {
+        val radius = mStoreViewModel.radiusLD.value ?: 0.0
+        currentPosition?.let {
+            val color = mBinding.root.context.getColor(R.color.primaryColor)
+            val colorFill = mBinding.root.context.getColor(R.color.fillArea)
+            val circlerOptions = CircleOptions()
+                .center(LatLng(it.latitude, it.longitude))
+                .radius(radius * 1000)
+                .strokeColor(color)
+                .fillColor(colorFill)
+                .strokeWidth(3.0f)
+            circle = mMap.addCircle(circlerOptions)
+        }
     }
 
-    //Metodo para convertir una drawable a mapa de bits para el icono del marcador
+    /**
+     * Metodo para convertir una drawable a mapa de bits para el icono del marcador
+     * @param context: contexto
+     * @param vectorResId:id del recurso drawable
+     * @return un mapa de bits
+     * */
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
         return ContextCompat.getDrawable(context, vectorResId)?.run {
             setBounds(0, 0, 128, 128)
@@ -342,6 +364,9 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         }
     }
 
+    /**
+     *Metodo que pide la ubicacion actual del dispositivo
+     * */
     private fun requesLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(
                 this.requireActivity(),
@@ -386,8 +411,14 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     override fun onResume() {
         super.onResume()
         if (!isLocationPermissionGranted()) {
+            //if(::mMap.isInitialized){
             mMap.isMyLocationEnabled = false
+            //}
         }
+
+        /*if (!::mMap.isInitialized){
+            cargarMapa()
+        }*/
     }
 
     override fun onMyLocationButtonClick(): Boolean {
