@@ -88,16 +88,24 @@
             android:padding="@dimen/common_padding_min">
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Total: S/.99.99"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
-
-            <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Continuar" />
+                android:text="Total: S/"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+            <TextView
+                android:id="@+id/tv_amountToPay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="9000"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_weight="1"
+
+                />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pagar" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,22 @@
 package com.example.dsm_frontend.ui.carModule.carrito
 
+import android.util.Log
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import com.stripe.android.PaymentConfiguration
+import com.stripe.android.paymentsheet.PaymentSheet
+import com.stripe.android.paymentsheet.PaymentSheetResult
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.IOException
+import androidx.fragment.app.Fragment
 import com.example.dsm_frontend.R
+import com.example.dsm_frontend.api.Payment
 import com.example.dsm_frontend.ui.carModule.carrito.adapter.ProductCarAdapter
 import com.example.dsm_frontend.databinding.FragmentMainCarBinding
 import com.example.dsm_frontend.data.model.Product
@@ -24,6 +37,28 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
             adapter = mProductAdapter
             setHasFixedSize(true)
         }
+        val payment : Payment =Payment(mBinding.tvAmountToPay.text.toString(),mBinding.btnPay, requireContext())
+        mBinding.btnPay.setOnClickListener{
+            println("Pagando ...")
+            requireActivity().runOnUiThread {
+                payment!!.onPayClicked(view)
+            }
+        }
+        PaymentConfiguration.init(
+            requireContext(),
+            "pk_test_51KM3QZG6zQNEntYYBTviK5vbbI0sloSqUoJ5ZFcpcjkApfD83KE53soTFIBYqZDWNqfRnGJvOvQmw3AmVRVojCPq00XmTq9dLN"
+        );
+        //mBinding.btnPay.setEnabled(false)
+        requireActivity().runOnUiThread {
+            payment!!.paymentSheet = PaymentSheet(
+                this
+            ) { paymentSheetResult: PaymentSheetResult ->
+                payment!!.onPaymentSheetResult(
+                    paymentSheetResult
+                )
+            }
+        }
+        requireActivity().runOnUiThread {    payment!!.fetchPaymentIntent()}
     }
 
     private fun getProducts(): List<Product> {
