@@ -29,6 +29,7 @@ import com.example.dsm_frontend.data.model.Store
 import com.example.dsm_frontend.presentation.StoreViewModel
 import com.example.dsm_frontend.presentation.StoreViewModelFactory
 import com.example.dsm_frontend.repository.StoreRepositoryImpl
+import com.example.dsm_frontend.ui.searchModule.searchedProducts.SearchedProductsFragmentDirections
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -61,6 +62,8 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     //private var radius: Double = 0.10 //EN KM
 
     private var mFusedLocationClient: FusedLocationProviderClient? = null
+
+    private var selectedStore: Store? = null
 
     companion object {
         const val REQUEST_CODE_LOCATION = 0
@@ -145,6 +148,17 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         mBinding.btnAplicar.setOnClickListener {
             //aqui hace la consulta con el nuevo radio
             getCloseStore()
+        }
+
+        mBinding.cardInfoStore.btnGoToStore.setOnClickListener {
+            selectedStore?.let {
+                val action = MainStoreFragmentDirections.actionMainStoreFragmentToStoreDetailsFragment(it)
+                findNavController().navigate(action)
+            }
+        }
+
+        mBinding.cardInfoStore.btnHide.setOnClickListener {
+            mBinding.frameInfoTienda.visibility = View.GONE
         }
 
         //Si el radio es modificado se ejecuta el bloque
@@ -427,9 +441,6 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         // mover el circulo
         getCurrentLocation()
         //if (::currentPosition.isInitialized) {
-        currentPosition?.let {
-            circle?.remove()
-        }
         return false
     }
 
@@ -439,7 +450,8 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
 
     override fun onMarkerClick(p0: Marker): Boolean {
         Toast.makeText(mBinding.root.context, p0.title, Toast.LENGTH_SHORT).show()
-        setStoreData(p0.tag as Store)
+        selectedStore = p0.tag as Store
+        setStoreData(selectedStore!!)
         mBinding.frameInfoTienda.visibility = View.VISIBLE
         return false
     }
