@@ -29,4 +29,10 @@ Esta rama contiene el proyecto principal del **frontend** de la aplicación "Min
 
 *   Abrir el proyecto en Android Studio
 
+*   Antes de ejecutar el proyecto del frontend se debe tener descargado y en ejecución el backend que se encuentra en el siguiente enlace:
+    
+    https://github.com/Gabo29val/gviernes_grupo5_backend_fisi.git
+
+*   Ahora sí ya puede ejecutar el proyecto del frontend.
+
 
