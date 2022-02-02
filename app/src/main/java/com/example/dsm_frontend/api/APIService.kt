@@ -7,13 +7,20 @@ import retrofit2.http.Path
 
 
 interface APIService {
-    @GET("all")
+    @GET("stores/all")
     suspend fun getAllStores(): List<Store>
 
-    @GET("stores/{lat},{lon},{radius}")
+    @GET("stores/close/{lat},{lon},{radius}")
     suspend fun getCloseStores(
         @Path("lat") lat: Double,
         @Path("lon") lon: Double,
         @Path("radius") radius: Double
     ): List<Store>
+
+    @GET("products/search/{word}")
+    suspend fun getProductsForWord(
+        @Path("word") word: String
+    ): List<Store>
+
+
 }

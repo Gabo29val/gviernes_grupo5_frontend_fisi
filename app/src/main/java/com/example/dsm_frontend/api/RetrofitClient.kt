@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitClient {
     val apiService: APIService by lazy {
         Retrofit.Builder()
-            .baseUrl("http://192.168.0.106:8080/stores/api/v1/")
+            .baseUrl("http://192.168.0.106:8080/minimarket/api/v1/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build().create(APIService::class.java)
     }

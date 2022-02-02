@@ -42,17 +42,17 @@ class Payment (var amount:String?="", var payButton:Button, var context:Context)
 
     }
 
-     fun showToast(message: String) {
+    fun showToast(message: String) {
 
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
-     fun fetchPaymentIntent() {
+    fun fetchPaymentIntent() {
         //val shoppingCartContent = "{\"id\":  ${binding.editText.text.toString()}}"
         val shoppingCartContent = "{\"id\":  ${this.amount}}"
 
         val requestBody: RequestBody = RequestBody.create(
-            "application/json; charset=utf-8".toMediaType(),shoppingCartContent
+            "application/json; charset=utf-8".toMediaType(), shoppingCartContent
         )
         val request: Request = Request.Builder()
             .url("$BACKEND_URL/create-payment-intent")
@@ -89,7 +89,7 @@ class Payment (var amount:String?="", var payButton:Button, var context:Context)
             })
     }
 
-     fun parseResponse(responseBody: ResponseBody?): JSONObject {
+    fun parseResponse(responseBody: ResponseBody?): JSONObject {
         if (responseBody != null) {
             try {
                 return JSONObject(responseBody.string())
@@ -102,14 +102,14 @@ class Payment (var amount:String?="", var payButton:Button, var context:Context)
         return JSONObject()
     }
 
-     fun onPayClicked(view: View) {
+    fun onPayClicked(view: View) {
         val configuration = PaymentSheet.Configuration("Example, Inc.")
 
         // Present Payment Sheet
         paymentSheet!!.presentWithPaymentIntent(paymentIntentClientSecret!!, configuration)
     }
 
-     fun onPaymentSheetResult(
+    fun onPaymentSheetResult(
         paymentSheetResult: PaymentSheetResult
     ) {
         if (paymentSheetResult is PaymentSheetResult.Completed) {

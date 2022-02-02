@@ -4,7 +4,7 @@ import com.example.dsm_frontend.core.Resource
 import com.example.dsm_frontend.data.StoreDataSource
 import com.example.dsm_frontend.data.model.Store
 
-class StoreRepositoryImpl(private val datasource: StoreDataSource): StoreRepository {
+class StoreRepositoryImpl(private val datasource: StoreDataSource): MinimarketRepository {
     override suspend fun getAllStores(): Resource<List<Store>> {
         return datasource.getAllStores()
     }
