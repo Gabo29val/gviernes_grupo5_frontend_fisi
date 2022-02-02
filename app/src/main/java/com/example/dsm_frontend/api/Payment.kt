@@ -15,35 +15,36 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
 
-class Payment (var amount:String?="", var payButton:Button, var context:Context){
-     val TAG = "CheckoutActivity"
-     val BACKEND_URL = "http://10.0.2.2:4242"
+class Payment(var amount: String? = "", var payButton: Button, var context: Context) {
+    val TAG = "CheckoutActivity"
+    //val BACKEND_URL = "http://10.0.2.2:4242"
+    val BACKEND_URL = "http://10.0.2.2:4242"
 
-     var paymentIntentClientSecret: String? = null
-     var paymentSheet: PaymentSheet? = null
+    var paymentIntentClientSecret: String? = null
+    var paymentSheet: PaymentSheet? = null
 
-     fun showAlert(title: String, message: String?) {
-            val dialog =
-                AlertDialog.Builder(context)
-                    .setTitle(title)
-                    .setMessage(message)
-                    .setPositiveButton("Ok", null)
-                    .create()
-            dialog.show()
+    fun showAlert(title: String, message: String?) {
+        val dialog =
+            AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("Ok", null)
+                .create()
+        dialog.show()
 
     }
 
-     fun showToast(message: String) {
+    fun showToast(message: String) {
 
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
-     fun fetchPaymentIntent() {
+    fun fetchPaymentIntent() {
         //val shoppingCartContent = "{\"id\":  ${binding.editText.text.toString()}}"
         val shoppingCartContent = "{\"id\":  ${this.amount}}"
 
         val requestBody: RequestBody = RequestBody.create(
-            "application/json; charset=utf-8".toMediaType(),shoppingCartContent
+            "application/json; charset=utf-8".toMediaType(), shoppingCartContent
         )
         val request: Request = Request.Builder()
             .url("$BACKEND_URL/create-payment-intent")
@@ -77,7 +78,7 @@ class Payment (var amount:String?="", var payButton:Button, var context:Context)
             })
     }
 
-     fun parseResponse(responseBody: ResponseBody?): JSONObject {
+    fun parseResponse(responseBody: ResponseBody?): JSONObject {
         if (responseBody != null) {
             try {
                 return JSONObject(responseBody.string())
@@ -90,14 +91,14 @@ class Payment (var amount:String?="", var payButton:Button, var context:Context)
         return JSONObject()
     }
 
-     fun onPayClicked(view: View) {
+    fun onPayClicked(view: View) {
         val configuration = PaymentSheet.Configuration("Example, Inc.")
 
         // Present Payment Sheet
         paymentSheet!!.presentWithPaymentIntent(paymentIntentClientSecret!!, configuration)
     }
 
-     fun onPaymentSheetResult(
+    fun onPaymentSheetResult(
         paymentSheetResult: PaymentSheetResult
     ) {
         if (paymentSheetResult is PaymentSheetResult.Completed) {

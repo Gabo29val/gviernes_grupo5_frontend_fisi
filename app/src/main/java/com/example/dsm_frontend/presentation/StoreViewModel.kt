@@ -3,11 +3,11 @@ package com.example.dsm_frontend.presentation
 import androidx.lifecycle.*
 import com.example.dsm_frontend.core.Resource
 import com.example.dsm_frontend.data.model.Store
-import com.example.dsm_frontend.repository.StoreRepository
+import com.example.dsm_frontend.repository.MinimarketRepository
 import kotlinx.coroutines.Dispatchers
 import java.lang.Exception
 
-class StoreViewModel(private val repo: StoreRepository) : ViewModel() {
+class StoreViewModel(private val repo: MinimarketRepository) : ViewModel() {
 
     private val closeStoresMLD = MutableLiveData<List<Store>>()
     val closeStoresLD: LiveData<List<Store>> = closeStoresMLD
@@ -48,8 +48,8 @@ class StoreViewModel(private val repo: StoreRepository) : ViewModel() {
 
 }
 
-class StoreViewModelFactory(private val repo: StoreRepository) : ViewModelProvider.Factory {
+class StoreViewModelFactory(private val repo: MinimarketRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return modelClass.getConstructor(StoreRepository::class.java).newInstance(repo)
+        return modelClass.getConstructor(MinimarketRepository::class.java).newInstance(repo)
     }
 }
