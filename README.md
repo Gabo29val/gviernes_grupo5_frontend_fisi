@@ -7,7 +7,7 @@ Docente: Bruno Palacios - bfpalacios@gmail.com
 
 Rama development (rama principal de desarrollo)
 ===============================================
-Esta rama contiene el proyecto principal del frontend de la aplicación "Minimarket de barrio".
+Esta rama contiene el proyecto principal del **frontend** de la aplicación "Minimarket de barrio".
 
 ### Herramientas utilizadas
 
