@@ -28,3 +28,12 @@ Esta rama contiene el proyecto principal del **frontend** de la aplicación "Min
 *   Abrir una terminal GitBash o desde Android Studio ubicarse en la rama development
 
 *   Abrir el proyecto en Android Studio
+
+*   **Full Git Repository:**
+
+    The full git repository is at: <https://github.com/altercation/solarized>
+    Get it using the following command:
+
+        $ git clone git://github.com/altercation/solarized.git
+
+*   **Application Specific Repositories:**
