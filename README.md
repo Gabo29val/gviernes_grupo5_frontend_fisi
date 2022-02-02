@@ -25,7 +25,7 @@ Esta rama contiene el proyecto principal del **frontend** de la aplicación "Min
 
         $ git clone https://github.com/Gabo29val/gviernes_grupo5_frontend_fisi.git   
     
-*   Abrir una terminal GitBash o desde Android Studio ubicarse en la rama development
+*   Abrir una terminal GitBash o desde Android Studio y traer los cambios de la rama remota **development** a una rama local
 
 *   Abrir el proyecto en Android Studio
 
