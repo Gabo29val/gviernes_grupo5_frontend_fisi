@@ -1,6 +1,7 @@
 ---
 Título del proyecto: Minimarket de barrio
-Autor: G5 Desarrollo de Sistemas Móviles UNMSM
+Autor: G5 - UNMSM
+Curso: Desarrollo de Sistemas Móviles
 Docente: Bruno Palacios - bfpalacios@gmail.com
 ---
 
