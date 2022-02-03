@@ -1,30 +1,28 @@
 package com.example.dsm_frontend.presentation
 
-import android.util.Log
 import androidx.lifecycle.*
-import com.example.dsm_frontend.api.APIService
 import com.example.dsm_frontend.core.Resource
 import com.example.dsm_frontend.data.model.Store
-import com.example.dsm_frontend.repository.StoreRepository
+import com.example.dsm_frontend.repository.MinimarketRepository
 import kotlinx.coroutines.Dispatchers
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 
-class StoreViewModel(private val repo: StoreRepository) : ViewModel() {
-/*
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("http://192.168.0.106:8080/stores/api/v1/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+class StoreViewModel(private val repo: MinimarketRepository) : ViewModel() {
 
-    private val service: APIService = retrofit.create(APIService::class.java)
-*/
+    private val closeStoresMLD = MutableLiveData<List<Store>>()
+    val closeStoresLD: LiveData<List<Store>> = closeStoresMLD
 
-    //private var stores = MutableLiveData<List<Store>>()
+    private val radiusMLD = MutableLiveData<Double>().apply { value = 0.2 }
+    val radiusLD: LiveData<Double> = radiusMLD
+
+    fun setRadius(radius: Double) {
+        radiusMLD.postValue(radius)
+    }
+
+
+    fun updateStores(stores: List<Store>) {
+        closeStoresMLD.postValue(stores)
+    }
 
     fun getAllStores() = liveData(Dispatchers.IO) {
         emit(Resource.Loading)
@@ -35,57 +33,23 @@ class StoreViewModel(private val repo: StoreRepository) : ViewModel() {
         }
     }
 
-    fun getCloseStores(lat: Double, lon: Double, radiusMi: Double) = liveData(Dispatchers.IO) {
-        emit(Resource.Loading)
-        try {
-            emit(repo.getCloseStores(lat, lon, radiusMi))
-        } catch (e: Exception) {
-            emit(Resource.Failure(e))
+    fun getCloseStores(lat: Double, lon: Double) = liveData(Dispatchers.IO) {
+        radiusLD.value?.let {
+            val radiusMi = Math.round(((it) * 0.62137) * 100.0) / 100.0
+
+            emit(Resource.Loading)
+            try {
+                emit(repo.getCloseStores(lat, lon, radiusMi))
+            } catch (e: Exception) {
+                emit(Resource.Failure(e))
+            }
         }
     }
 
-
-/*    fun getStores(): LiveData<List<Store>> {
-        val call = service.getAllStores()
-        call.enqueue(object : Callback<List<Store>> {
-            override fun onResponse(call: Call<List<Store>>, response: Response<List<Store>>) {
-                val resp = response.body()
-                resp.let {
-                    stores.postValue(it)
-                    Log.d("TIENDAS", it.toString())
-                }
-            }
-
-            override fun onFailure(call: Call<List<Store>>, t: Throwable) {
-                t.message?.let { Log.d("ERRRORRRRRRRRR", it) }
-            }
-        })
-
-        return stores
-    }*/
-
-/*    fun getCloseStores(lat: Double, lon: Double, radiusMi: Double): LiveData<List<Store>> {
-        val call = service.getCloseStores(lat, lon, radiusMi)
-        Log.d("CONSULTA", "lat: $lat, lon: $lon, radius: $radiusMi")
-        call.enqueue(object : Callback<List<Store>> {
-            override fun onResponse(call: Call<List<Store>>, response: Response<List<Store>>) {
-                val resp = response.body()
-                resp.let {
-                    stores.postValue(it)
-                    Log.d("TIENDAS", it.toString())
-                }
-            }
-
-            override fun onFailure(call: Call<List<Store>>, t: Throwable) {
-                t.message?.let { Log.d("ERRRORRRRRRRRR", it) }
-            }
-        })
-        return stores
-    }*/
 }
 
-class StoreViewModelFactory(private val repo: StoreRepository) : ViewModelProvider.Factory {
+class StoreViewModelFactory(private val repo: MinimarketRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return modelClass.getConstructor(StoreRepository::class.java).newInstance(repo)
+        return modelClass.getConstructor(MinimarketRepository::class.java).newInstance(repo)
     }
 }

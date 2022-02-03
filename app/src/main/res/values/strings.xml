@@ -7,6 +7,7 @@
     <string name="text_btn_filtrar">Filtrar</string>
     <string name="tv_descripción">Descripción</string>
     <string name="tv_lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+    <string name="tv_lorem_min">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
     <string name="tv_especificaciones">Especificaciones</string>
     <string name="fab_add_car">Agregar producto</string>
     <string name="description_img">Imagen del producto</string>
@@ -23,4 +24,6 @@
     <string name="bottom_navigation_item_title_mi_carrito">Mi carrito</string>
     <string name="text_btn_eliminar">Quitar todo</string>
     <string name="bottom_navigation_item_title_tiendas">Tiendas</string>
+    <string name="info_not_close_stores">No hay tiendas cercanas en este rango.</string>
+    <string name="info_not_time_service">Tiempo agotado. No se pudo acceder al servicio.</string>
 </resources>

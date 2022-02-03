@@ -11,7 +11,7 @@ import com.example.dsm_frontend.R
 import com.example.dsm_frontend.databinding.ItemProductCardBinding
 import com.example.dsm_frontend.data.model.Product
 
-class ProductAdapter(val products: List<Product>, val itemClickListener: OnProductClickListener) :
+class ProductAdapter(var products: List<Product>, val itemClickListener: OnProductClickListener) :
     RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
     inner class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val binding = ItemProductCardBinding.bind(view)
@@ -35,6 +35,11 @@ class ProductAdapter(val products: List<Product>, val itemClickListener: OnProdu
                 }
             }
         }
+    }
+
+    fun setData(products: List<Product>){
+        this.products = products
+        notifyDataSetChanged()
     }
 
     interface OnProductClickListener {

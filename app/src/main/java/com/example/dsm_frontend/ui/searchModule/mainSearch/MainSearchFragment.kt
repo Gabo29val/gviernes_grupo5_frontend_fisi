@@ -34,7 +34,10 @@ class MainSearchFragment : Fragment(R.layout.fragment_main_search) {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                findNavController().navigate(R.id.action_mainSearchFragment_to_searchedProductsFragment)
+                query?.let {
+                    val action = MainSearchFragmentDirections.actionMainSearchFragmentToSearchedProductsFragment(it)
+                    findNavController().navigate(action)
+                }
                 return false
             }
 

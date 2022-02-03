@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_searchedProductsFragment_to_productDetailsFragment"
             app:destination="@id/productDetailsFragment" />
+        <argument
+            android:name="word"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/productDetailsFragment"
@@ -44,10 +47,22 @@
         <action
             android:id="@+id/action_mainStoreFragment_to_searchedStoresFragment"
             app:destination="@id/searchedStoresFragment" />
+        <action
+            android:id="@+id/action_mainStoreFragment_to_storeDetailsFragment"
+            app:destination="@id/storeDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchedStoresFragment"
         android:name="com.example.dsm_frontend.ui.storeModule.searchedStores.SearchedStoresFragment"
         android:label="fragment_searched_stores"
         tools:layout="@layout/fragment_searched_stores" />
+    <fragment
+        android:id="@+id/storeDetailsFragment"
+        android:name="com.example.dsm_frontend.ui.storeModule.storeDetails.StoreDetailsFragment"
+        android:label="fragment_store_details"
+        tools:layout="@layout/fragment_store_details" >
+        <argument
+            android:name="store"
+            app:argType="com.example.dsm_frontend.data.model.Store" />
+    </fragment>
 </navigation>
