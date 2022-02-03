@@ -80,6 +80,13 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -92,15 +99,16 @@
                 android:layout_height="wrap_content"
                 android:text="Total: S/"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+
             <TextView
                 android:id="@+id/tv_amountToPay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="9000"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                tools:text="7000" />
 
-                />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_pay"
                 android:layout_width="wrap_content"

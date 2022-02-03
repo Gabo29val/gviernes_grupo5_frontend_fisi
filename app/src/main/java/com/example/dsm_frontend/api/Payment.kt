@@ -16,29 +16,28 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
 
-class Payment (var amount:String?="", var payButton:Button, var context:Context){
-     val TAG = "CheckoutActivity"
-     val BACKEND_URL = "http://192.168.0.10/stripe"
+class Payment(var amount: String? = "", var payButton: Button, var context: Context) {
+    val TAG = "CheckoutActivity"
+
+    //val BACKEND_URL = "http://192.168.0.10/stripe"
+    val BACKEND_URL = "http://192.168.0.106:8080/stripe"
+
     //val BACKEND_URL = "http://127.0.0.1:8080/stripe"
-     var paymentIntentClientSecret: String? = null
-     lateinit var paymentSheet: PaymentSheet
+    var paymentIntentClientSecret: String? = null
+    lateinit var paymentSheet: PaymentSheet
 
 
+    fun showAlert(title: String, message: String?) {
 
 
-     fun showAlert(title: String, message: String?) {
-
-
-             val dialog =
-                 AlertDialog.Builder(context)
-                     .setTitle(title)
-                     .setMessage(message)
-                     .setPositiveButton("Ok", null)
-                     .create()
-             //dialog.show()
-             dialog.dismiss()
-
-
+        val dialog =
+            AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("Ok", null)
+                .create()
+        //dialog.show()
+        dialog.dismiss()
 
     }
 
@@ -74,7 +73,7 @@ class Payment (var amount:String?="", var payButton:Button, var context:Context)
                 ) {
                     if (!response.isSuccessful) {
                         println("El error es $response")
-                         showAlert(
+                        showAlert(
                             "Failed to load page",
                             "Error: $response"
                         )
