@@ -17,34 +17,50 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.api.Payment
+import com.example.dsm_frontend.data.model.Car
+import com.example.dsm_frontend.data.model.ItemCar
 import com.example.dsm_frontend.ui.carModule.carrito.adapter.ProductCarAdapter
 import com.example.dsm_frontend.databinding.FragmentMainCarBinding
 import com.example.dsm_frontend.data.model.Product
 import com.example.dsm_frontend.data.model.Specification
+import com.example.dsm_frontend.presentation.MainCarViewModel
 import com.stripe.android.paymentsheet.PaymentSheetResultCallback
 
 class MainCarFragment : Fragment(R.layout.fragment_main_car) {
 
     private lateinit var mBinding: FragmentMainCarBinding
     private lateinit var mProductAdapter: ProductCarAdapter
+    private val mMainCarVM: MainCarViewModel by viewModels()
+
+
     val TAG = "CheckoutActivity"
     val BACKEND_URL = "http://192.168.0.106:8080/stripe"
+
     //val BACKEND_URL = "http://127.0.0.1:8080/stripe"
-   // val BACKEND_URL = "http://10.0.2.2:8080/stripe"
+    // val BACKEND_URL = "http://10.0.2.2:8080/stripe"
     var paymentIntentClientSecret: String? = null
+
     lateinit var paymentSheet: PaymentSheet
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = FragmentMainCarBinding.bind(view)
 
-        mProductAdapter = ProductCarAdapter(getProducts())
+        mProductAdapter = ProductCarAdapter(mMainCarVM)
 
         mBinding.rvProducts.apply {
             adapter = mProductAdapter
             setHasFixedSize(true)
         }
+
+        mMainCarVM.amountTotalLD.observe(viewLifecycleOwner, {
+            mBinding.tvAmountToPay.text = it.toString()
+        })
+
         //val payment : Payment =Payment(mBinding.tvAmountToPay.text.toString(),mBinding.btnPay, requireContext())
         /*mBinding.btnPay.setOnClickListener{
             println("Pagando ...")
@@ -70,7 +86,7 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
 
         // Hook up the pay button
 
-        mBinding.btnPay.setOnClickListener{
+        mBinding.btnPay.setOnClickListener {
 
             onPayClicked()
             //initPasarela()
@@ -90,7 +106,8 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
 
         fetchPaymentIntent()
     }
-    private fun initPasarela(){
+
+    private fun initPasarela() {
         paymentSheet = PaymentSheet(
             this
         ) { paymentSheetResult: PaymentSheetResult? ->
@@ -104,41 +121,14 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
         //onPayClicked()
 
     }
-    private fun getProducts(): List<Product> {
-        return listOf(
-            Product(
-                name = "Red label 1",
-                photoUrl = "https://www.blogdelfotografo.com/wp-content/uploads/2020/12/producto_fondo_negro.webp",
-                nameStore = "Tottus",
-                price = 99.99,
-                description = "Dentro de los licores encontramos al Whisky, una bebida alcohólica a base de malta fermentada de cereales como cebada, trigo, centeno y maíz, que se destila y añeja en barriles de madera tradicionalmente de roble blanco. Este último proceso dura por lo menos tres años para que adquiera el color caramelo que lo caracteriza. El Wisky tiene sus orígenes en Irlanda y Escocia y en la actualidad se disfruta en muchos países a nivel mundial.",
-                stock = 10,
-                specifications = mutableListOf(
-                    Specification("Presentación", "Botella"),
-                    Specification("Composición", "Grano y malta"),
-                    Specification("Proceso de añejamiento", "No declarada"),
-                    Specification("Volumen neto", "750ml"),
-                )
-            ),
-            Product(
-                name = "Red label 2",
-                photoUrl = "https://www.blogdelfotografo.com/wp-content/uploads/2020/12/producto_fondo_negro.webp",
-                nameStore = "Tottus",
-                price = 99.99,
-                description = "Dentro de los licores encontramos al Whisky, una bebida alcohólica a base de malta fermentada de cereales como cebada, trigo, centeno y maíz, que se destila y añeja en barriles de madera tradicionalmente de roble blanco. Este último proceso dura por lo menos tres años para que adquiera el color caramelo que lo caracteriza. El Wisky tiene sus orígenes en Irlanda y Escocia y en la actualidad se disfruta en muchos países a nivel mundial.",
-                stock = 10,
-                specifications = mutableListOf(
-                    Specification("Presentación", "Botella"),
-                    Specification("Composición", "Grano y malta"),
-                    Specification("Proceso de añejamiento", "No declarada"),
-                    Specification("Volumen neto", "750ml"),
-                )
-            ),
-        )
+
+    private fun getProducts(): List<ItemCar> {
+        return Car.items
     }
+
     fun showAlert(title: String, message: String?) {
 
-        requireActivity().runOnUiThread  {
+        requireActivity().runOnUiThread {
             val dialog =
                 AlertDialog.Builder(mBinding.root.context)
                     .setTitle(title)
@@ -160,10 +150,14 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
 
     fun fetchPaymentIntent() {
         //val shoppingCartContent = "{\"id\":  ${binding.editText.text.toString()}}"
-        val shoppingCartContent = "{\"totalAmount\":  ${mBinding.tvAmountToPay.text.toString()}}"
+        //val shoppingCartContent = "{\"totalAmount\":  ${mBinding.tvAmountToPay.text.toString()}}"
+
+        val shoppingCartContent = "{\"totalAmount\":  ${(mMainCarVM.amountTotalLD.value!!*100).toInt()}}"
+
+        Toast.makeText(mBinding.root.context, shoppingCartContent, Toast.LENGTH_SHORT).show()
 
         val requestBody: RequestBody = RequestBody.create(
-            "application/json; charset=utf-8".toMediaType(),shoppingCartContent
+            "application/json; charset=utf-8".toMediaType(), shoppingCartContent
         )
         val request: Request = Request.Builder()
             .url("$BACKEND_URL/create-payment-intent")
@@ -197,13 +191,13 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
                     } else {
                         val responseJson = parseResponse(response.body)
                         paymentIntentClientSecret = responseJson.optString("clientSecret")
-                         activity!!.runOnUiThread {
-                             mBinding.btnPay!!.isEnabled = true
+                        activity!!.runOnUiThread {
+                            mBinding.btnPay!!.isEnabled = true
 
-                         }
+                        }
 
                         Log.i(TAG, "Retrieved PaymentIntent")
-                       // onPayClicked()
+                        // onPayClicked()
                     }
                 }
             })
@@ -242,7 +236,6 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
             showAlert("Payment failed", error.localizedMessage)
         }
     }
-
 
 
 }
