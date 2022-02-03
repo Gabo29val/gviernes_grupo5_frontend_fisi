@@ -100,19 +100,20 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
     }
 
     fun showAlert(title: String, message: String?) {
-        requireActivity().runOnUiThread {
-            val dialog =
-                AlertDialog.Builder(mBinding.root.context)
-                    .setTitle(title)
-                    .setMessage(message)
-                    .setPositiveButton("Ok", null)
-                    .create()
-            dialog.show()
-            //dialog.dismiss()
-            println(message)
-            mBinding.progressBar.visibility = View.GONE
+        activity?.let {
+            it.runOnUiThread {
+                val dialog =
+                    AlertDialog.Builder(mBinding.root.context)
+                        .setTitle(title)
+                        .setMessage(message)
+                        .setPositiveButton("Ok", null)
+                        .create()
+                dialog.show()
+                //dialog.dismiss()
+                println(message)
+                mBinding.progressBar.visibility = View.GONE
+            }
         }
-
     }
 
     fun showToast(message: String) {
@@ -214,6 +215,10 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
     ) {
         if (paymentSheetResult is PaymentSheetResult.Completed) {
             showToast("Payment complete!")
+            Car.items.clear()
+            (mBinding.rvProducts.adapter as ProductCarAdapter).notifyDataSetChanged()
+            mMainCarVM.updateTotalAmount()
+
         } else if (paymentSheetResult is PaymentSheetResult.Canceled) {
             Log.i(TAG, "Payment canceled!")
         } else if (paymentSheetResult is PaymentSheetResult.Failed) {

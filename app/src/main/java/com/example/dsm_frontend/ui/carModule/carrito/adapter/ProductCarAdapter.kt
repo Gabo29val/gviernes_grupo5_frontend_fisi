@@ -26,7 +26,7 @@ class ProductCarAdapter(private val viewModel: MainCarViewModel) :
             binding.apply {
                 tvNameProduct.text = item.product?.name
                 tvNameStore.text = item.product?.nameStore
-                tvPriceProduct.text = item.product?.price.toString()
+                tvPriceProduct.text = "S/ ${item.product?.price.toString()}"
                 tvCantidad.text = item.amount.toString()
 
                 Glide.with(this.root)
