@@ -1,5 +1,6 @@
 package com.example.dsm_frontend.api
 
+import com.example.dsm_frontend.data.model.Product
 import com.example.dsm_frontend.data.model.Store
 import retrofit2.Call
 import retrofit2.http.GET
@@ -18,9 +19,9 @@ interface APIService {
     ): List<Store>
 
     @GET("products/search/{word}")
-    suspend fun getProductsForWord(
+    suspend fun getProductsByWord(
         @Path("word") word: String
-    ): List<Store>
+    ): List<Product>
 
 
 }

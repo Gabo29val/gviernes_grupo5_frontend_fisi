@@ -11,11 +11,11 @@ import androidx.fragment.app.viewModels
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.api.RetrofitClient
 import com.example.dsm_frontend.core.Resource
-import com.example.dsm_frontend.data.StoreDataSource
+import com.example.dsm_frontend.data.MinimarketDataSource
 import com.example.dsm_frontend.databinding.FragmentSearchedStoresBinding
 import com.example.dsm_frontend.presentation.StoreViewModel
 import com.example.dsm_frontend.presentation.StoreViewModelFactory
-import com.example.dsm_frontend.repository.StoreRepositoryImpl
+import com.example.dsm_frontend.repository.MinimarketRepositoryImpl
 import com.example.dsm_frontend.ui.storeModule.searchedStores.adapter.StoreAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -26,8 +26,8 @@ class SearchedStoresFragment : Fragment(R.layout.fragment_searched_stores) {
 
     private val mStoreViewModel: StoreViewModel by viewModels {
         StoreViewModelFactory(
-            StoreRepositoryImpl(
-                StoreDataSource(
+            MinimarketRepositoryImpl(
+                MinimarketDataSource(
                     RetrofitClient.apiService
                 )
             )

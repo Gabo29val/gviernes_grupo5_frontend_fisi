@@ -8,7 +8,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
@@ -23,13 +22,12 @@ import com.example.dsm_frontend.R
 import com.example.dsm_frontend.api.Maps
 import com.example.dsm_frontend.api.RetrofitClient
 import com.example.dsm_frontend.core.Resource
-import com.example.dsm_frontend.data.StoreDataSource
+import com.example.dsm_frontend.data.MinimarketDataSource
 import com.example.dsm_frontend.databinding.FragmentMainStoreBinding
 import com.example.dsm_frontend.data.model.Store
 import com.example.dsm_frontend.presentation.StoreViewModel
 import com.example.dsm_frontend.presentation.StoreViewModelFactory
-import com.example.dsm_frontend.repository.StoreRepositoryImpl
-import com.example.dsm_frontend.ui.searchModule.searchedProducts.SearchedProductsFragmentDirections
+import com.example.dsm_frontend.repository.MinimarketRepositoryImpl
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -46,8 +44,8 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
 
     private val mStoreViewModel by navGraphViewModels<StoreViewModel>(R.id.main_graph) {
         StoreViewModelFactory(
-            StoreRepositoryImpl(
-                StoreDataSource(
+            MinimarketRepositoryImpl(
+                MinimarketDataSource(
                     RetrofitClient.apiService
                 )
             )
@@ -72,23 +70,12 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = FragmentMainStoreBinding.bind(view)
-        getInitialCurrentPosition()
+
+        loadMap()
         setupComponents()
         setupSearchView()
     }
 
-    /**
-     * Metodo para pedir la ubicacion actual inicial del dispositivo
-     * */
-    @SuppressLint("MissingPermission")
-    fun getInitialCurrentPosition() {
-        mFusedLocationClient =
-            LocationServices.getFusedLocationProviderClient(mBinding.root.context)
-        mFusedLocationClient!!.lastLocation.addOnSuccessListener {
-            currentPosition = it
-            loadMap()
-        }
-    }
 
     /**
      * Metodo para cargar el mapa en el fragmento
@@ -96,6 +83,62 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     fun loadMap() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+    }
+
+    /**
+     * Metodo para inicializar valores de componentes
+     * */
+    private fun setupComponents() {
+        mBinding.frameInfoTienda.visibility = View.GONE
+
+        mBinding.btnAplicar.setOnClickListener {
+            //aqui hace la consulta con el nuevo radio
+            getCloseStore()
+        }
+
+        mBinding.cardInfoStore.btnGoToStore.setOnClickListener {
+            selectedStore?.let {
+                val action =
+                    MainStoreFragmentDirections.actionMainStoreFragmentToStoreDetailsFragment(it)
+                findNavController().navigate(action)
+            }
+        }
+
+        mBinding.cardInfoStore.btnHide.setOnClickListener {
+            mBinding.frameInfoTienda.visibility = View.GONE
+        }
+
+        //Si el radio es modificado se ejecuta el bloque
+        mStoreViewModel.radiusLD.observe(viewLifecycleOwner, {
+            mBinding.tvRatioRange.text = it.toString()
+            mBinding.sliderRadius.value = it.toFloat()
+            circle?.radius = it * 1000
+        })
+
+        //El deslizador modifica el radio
+        mBinding.sliderRadius.addOnChangeListener { slider, value, fromUser ->
+            val valueRed = Math.round(value.toDouble() * 100.0) / 100.0
+            mStoreViewModel.setRadius(valueRed)
+        }
+    }
+
+    /**
+     * Metodo para setear el serachview
+     * */
+    private fun setupSearchView() {
+        val item = mBinding.toolbar.menu.findItem(R.id.action_search)
+        val searchView: SearchView = item.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                findNavController().navigate(R.id.action_mainStoreFragment_to_searchedStoresFragment)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
     }
 
     /**
@@ -140,61 +183,6 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     }
 
     /**
-     * Metodo para inicializar valores de componentes
-     * */
-    private fun setupComponents() {
-        mBinding.frameInfoTienda.visibility = View.GONE
-
-        mBinding.btnAplicar.setOnClickListener {
-            //aqui hace la consulta con el nuevo radio
-            getCloseStore()
-        }
-
-        mBinding.cardInfoStore.btnGoToStore.setOnClickListener {
-            selectedStore?.let {
-                val action = MainStoreFragmentDirections.actionMainStoreFragmentToStoreDetailsFragment(it)
-                findNavController().navigate(action)
-            }
-        }
-
-        mBinding.cardInfoStore.btnHide.setOnClickListener {
-            mBinding.frameInfoTienda.visibility = View.GONE
-        }
-
-        //Si el radio es modificado se ejecuta el bloque
-        mStoreViewModel.radiusLD.observe(viewLifecycleOwner, {
-            mBinding.tvRatioRange.text = it.toString()
-            mBinding.sliderRadius.value = it.toFloat()
-            circle?.radius = it * 1000
-        })
-
-        //El deslizador modifica el radio
-        mBinding.sliderRadius.addOnChangeListener { slider, value, fromUser ->
-            val valueRed = Math.round(value.toDouble() * 100.0) / 100.0
-            mStoreViewModel.setRadius(valueRed)
-        }
-    }
-
-    /**
-     * Metodo para setear el serachview
-     * */
-    private fun setupSearchView() {
-        val item = mBinding.toolbar.menu.findItem(R.id.action_search)
-        val searchView: SearchView = item.actionView as SearchView
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                findNavController().navigate(R.id.action_mainStoreFragment_to_searchedStoresFragment)
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
-        })
-    }
-
-    /**
      * Metodo que solicita las tiendas cercanas al viewmodel y
      * modifica al mismo con el resultado
      * */
@@ -234,6 +222,24 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     }
 
     /**
+     * Metodo para pedir la ubicacion actual inicial del dispositivo
+     * */
+    @SuppressLint("MissingPermission")
+    fun getInitialCurrentPosition() {
+        mFusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(mBinding.root.context)
+
+        mFusedLocationClient!!.lastLocation
+            .addOnSuccessListener {
+                currentPosition = it
+                goToCurrentPosition()
+            }
+            .addOnFailureListener {
+                Toast.makeText(mBinding.root.context, "ERROR", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    /**
      * Metodo que pide ultima ubicacion registrada del dispositivo
      * */
     @SuppressLint("MissingPermission")
@@ -241,34 +247,12 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         mFusedLocationClient =
             LocationServices.getFusedLocationProviderClient(mBinding.root.context)
         mFusedLocationClient!!.lastLocation.addOnSuccessListener {
-
-            //Actualizamos el area circular
-            //drawCircularArea()
             currentPosition = it
-
-            Log.d(
-                "CURRENT",
-                "lat ${it.latitude} lon${it.longitude}"
-            )
-            mMap.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    LatLng(it.latitude, it.longitude),
-                    16.5f
-                )
-            );
+            goToCurrentPosition()
         }
     }
 
-    /**
-     * metodo que se ejecuta cuando el mapa está cargado en el fragment
-     * Es decir cuando se llama a cargarMapa()
-     * */
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        mMap.setOnMyLocationButtonClickListener(this)
-        mMap.setOnMyLocationClickListener(this)
-        mMap.setOnMarkerClickListener(this)
-
+    fun goToCurrentPosition() {
         currentPosition?.let {
             mMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
@@ -279,11 +263,6 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
             drawCircularArea()
         }
 
-        enableLocation()
-
-        mStoreViewModel.closeStoresLD.observe(viewLifecycleOwner, {
-            drawMarkerStores(it)
-        })
     }
 
     /**
@@ -357,6 +336,23 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     }
 
     /**
+     * metodo que se ejecuta cuando el mapa está cargado en el fragment
+     * Es decir cuando se llama a cargarMapa()
+     * */
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+        mMap.setOnMyLocationButtonClickListener(this)
+        mMap.setOnMyLocationClickListener(this)
+        mMap.setOnMarkerClickListener(this)
+
+        enableLocation()
+
+        mStoreViewModel.closeStoresLD.observe(viewLifecycleOwner, {
+            drawMarkerStores(it)
+        })
+    }
+
+    /**
      * Métodos para confirmar los permisos de localización
      */
     private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(
@@ -370,6 +366,7 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         if (isLocationPermissionGranted()) {
             //si
             mMap.isMyLocationEnabled = true
+            getInitialCurrentPosition()
 
         } else {
             //no
@@ -393,9 +390,17 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
                 Toast.LENGTH_SHORT
             ).show()
         } else {
-            ActivityCompat.requestPermissions(
+
+            /*ActivityCompat.requestPermissions(
                 requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                REQUEST_CODE_LOCATION
+            )*/
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
                 REQUEST_CODE_LOCATION
             )
         }
@@ -410,6 +415,9 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
         when (requestCode) {
             REQUEST_CODE_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 mMap.isMyLocationEnabled = true
+                Toast.makeText(mBinding.root.context, "PERMISOS ACEPTADOS", Toast.LENGTH_SHORT)
+                    .show()
+                getInitialCurrentPosition()
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -424,10 +432,14 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
     @SuppressLint("MissingPermission")
     override fun onResume() {
         super.onResume()
+        if (!::mMap.isInitialized) return
         if (!isLocationPermissionGranted()) {
-            //if(::mMap.isInitialized){
             mMap.isMyLocationEnabled = false
-            //}
+            Toast.makeText(
+                mBinding.root.context,
+                "Para activar la localización ve a ajustes y acepta los permisos (onresume)",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
         /*if (!::mMap.isInitialized){
