@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.dsm_frontend.R
+import com.example.dsm_frontend.data.model.Car
+import com.example.dsm_frontend.data.model.ItemCar
 import com.example.dsm_frontend.databinding.ItemProductCardBinding
 import com.example.dsm_frontend.data.model.Product
 
@@ -31,7 +33,9 @@ class ProductAdapter(var products: List<Product>, val itemClickListener: OnProdu
                 }
 
                 fabAddCar.setOnClickListener {
-                    Toast.makeText(binding.root.context, product.id, Toast.LENGTH_SHORT).show()
+                    val item = ItemCar(product = product, amount = 1)
+                    Car.addItem(item)
+                    Toast.makeText(binding.root.context, "Producto agregado al carrito", Toast.LENGTH_SHORT).show()
                 }
             }
         }

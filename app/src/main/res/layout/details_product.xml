@@ -7,40 +7,42 @@
     android:paddingBottom="@dimen/common_padding_middle">
 
     <ImageButton
-        android:id="@+id/btn_add"
+        android:id="@+id/btn_remove"
         android:layout_width="@dimen/common_padding_long"
         android:layout_height="@dimen/common_padding_long"
         android:layout_marginStart="@dimen/common_padding_default"
+        android:layout_marginTop="@dimen/common_padding_min"
         android:background="?attr/selectableItemBackground"
-        android:contentDescription="@string/description_btn_add"
+        android:contentDescription="@string/description_btn_remove"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_add_circle"
+        android:src="@drawable/ic_remove_circle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/primaryLightColor" />
+
 
     <TextView
         android:id="@+id/tv_cantidad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/common_padding_min"
         android:text="@string/_1"
+        android:layout_marginStart="@dimen/common_padding_min"
         android:textAppearance="?attr/textAppearanceHeadline5"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_add"
-        app:layout_constraintStart_toEndOf="@+id/btn_add"
-        app:layout_constraintTop_toTopOf="@+id/btn_add" />
+        app:layout_constraintBottom_toBottomOf="@+id/btn_remove"
+        app:layout_constraintStart_toEndOf="@+id/btn_remove"
+        app:layout_constraintTop_toTopOf="@+id/btn_remove" />
 
     <ImageButton
-        android:id="@+id/btn_remove"
+        android:id="@+id/btn_add"
         android:layout_width="@dimen/common_padding_long"
         android:layout_height="@dimen/common_padding_long"
-        android:layout_marginStart="@dimen/common_padding_min"
         android:background="?attr/selectableItemBackground"
-        android:contentDescription="@string/description_btn_remove"
+        android:contentDescription="@string/description_btn_add"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_remove_circle"
+        android:src="@drawable/ic_add_circle"
+        android:layout_marginStart="@dimen/common_padding_min"
         app:layout_constraintStart_toEndOf="@+id/tv_cantidad"
-        app:layout_constraintTop_toTopOf="@+id/btn_add"
+        app:layout_constraintTop_toTopOf="@+id/btn_remove"
         app:tint="@color/primaryLightColor" />
 
     <TextView
@@ -51,8 +53,8 @@
         android:text="@string/tv_descripción"
         android:textAppearance="?attr/textAppearanceHeadline5"
         android:textColor="@color/primaryColor"
-        app:layout_constraintStart_toStartOf="@+id/btn_add"
-        app:layout_constraintTop_toBottomOf="@+id/btn_add" />
+        app:layout_constraintStart_toStartOf="@+id/btn_remove"
+        app:layout_constraintTop_toBottomOf="@+id/btn_remove" />
 
     <TextView
         android:id="@+id/tv_description"

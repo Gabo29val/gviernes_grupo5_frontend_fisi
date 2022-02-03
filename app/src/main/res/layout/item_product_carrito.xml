@@ -34,11 +34,11 @@
                 android:layout_weight="1">
 
                 <TextView
-                    android:layout_marginTop="@dimen/common_padding_min"
-                    android:layout_marginStart="@dimen/common_padding_min"
                     android:id="@+id/tv_name_product"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/common_padding_min"
+                    android:layout_marginTop="@dimen/common_padding_min"
                     android:textAppearance="?attr/textAppearanceHeadline6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -47,8 +47,8 @@
                 <TextView
                     android:id="@+id/tv_price_product"
                     android:layout_width="wrap_content"
-                    android:layout_marginBottom="@dimen/common_padding_min"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/common_padding_min"
                     android:textAppearance="?attr/textAppearanceSubtitle1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/tv_name_product"
@@ -65,6 +65,7 @@
                     tools:text="Tienda" />
 
                 <ImageButton
+                    android:id="@+id/imageButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/common_padding_default"
@@ -75,15 +76,15 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageButton
-                    android:id="@+id/btn_add"
+                    android:id="@+id/btn_remove"
                     android:layout_width="@dimen/common_padding_long"
                     android:layout_height="@dimen/common_padding_long"
                     android:layout_marginEnd="@dimen/common_padding_min"
                     android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/description_btn_add"
+                    android:contentDescription="@string/description_btn_remove"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_add_circle"
-                    app:layout_constraintBottom_toBottomOf="@+id/btn_remove"
+                    android:src="@drawable/ic_remove_circle"
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_add"
                     app:layout_constraintEnd_toStartOf="@+id/tv_cantidad"
                     app:tint="@color/primaryLightColor" />
 
@@ -94,20 +95,20 @@
                     android:layout_marginEnd="@dimen/common_padding_min"
                     android:text="@string/_1"
                     android:textAppearance="?attr/textAppearanceHeadline5"
-                    app:layout_constraintBottom_toBottomOf="@+id/btn_remove"
-                    app:layout_constraintEnd_toStartOf="@+id/btn_remove"
-                    app:layout_constraintTop_toTopOf="@+id/btn_remove" />
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_add"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_add"
+                    app:layout_constraintTop_toTopOf="@+id/btn_add" />
 
                 <ImageButton
-                    android:id="@+id/btn_remove"
+                    android:id="@+id/btn_add"
                     android:layout_width="@dimen/common_padding_long"
                     android:layout_height="@dimen/common_padding_long"
                     android:layout_marginEnd="@dimen/common_padding_min"
                     android:layout_marginBottom="@dimen/common_padding_min"
                     android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/description_btn_remove"
+                    android:contentDescription="@string/description_btn_add"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_remove_circle"
+                    android:src="@drawable/ic_add_circle"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:tint="@color/primaryLightColor" />
