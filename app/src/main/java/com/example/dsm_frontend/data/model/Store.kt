@@ -8,6 +8,7 @@ data class Store(
     var photoUrl: String? = null,
     var rating: Double? = null,
     var address: String? = null,
+    var telephone: String? = null,
     var location: Location? = null
 ) : Serializable
 

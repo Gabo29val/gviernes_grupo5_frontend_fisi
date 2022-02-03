@@ -22,12 +22,12 @@ import com.example.dsm_frontend.R
 import com.example.dsm_frontend.api.Maps
 import com.example.dsm_frontend.api.RetrofitClient
 import com.example.dsm_frontend.core.Resource
-import com.example.dsm_frontend.data.StoreDataSource
+import com.example.dsm_frontend.data.MinimarketDataSource
 import com.example.dsm_frontend.databinding.FragmentMainStoreBinding
 import com.example.dsm_frontend.data.model.Store
 import com.example.dsm_frontend.presentation.StoreViewModel
 import com.example.dsm_frontend.presentation.StoreViewModelFactory
-import com.example.dsm_frontend.repository.StoreRepositoryImpl
+import com.example.dsm_frontend.repository.MinimarketRepositoryImpl
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -44,8 +44,8 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
 
     private val mStoreViewModel by navGraphViewModels<StoreViewModel>(R.id.main_graph) {
         StoreViewModelFactory(
-            StoreRepositoryImpl(
-                StoreDataSource(
+            MinimarketRepositoryImpl(
+                MinimarketDataSource(
                     RetrofitClient.apiService
                 )
             )
