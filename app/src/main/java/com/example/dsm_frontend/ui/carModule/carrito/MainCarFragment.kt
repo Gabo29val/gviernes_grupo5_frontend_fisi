@@ -61,53 +61,15 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
             mBinding.tvAmountToPay.text = it.toString()
         })
 
-        //val payment : Payment =Payment(mBinding.tvAmountToPay.text.toString(),mBinding.btnPay, requireContext())
-        /*mBinding.btnPay.setOnClickListener{
-            println("Pagando ...")
-            requireActivity().runOnUiThread {
-                payment!!.onPayClicked(view)
-            }
-        }*/
         PaymentConfiguration.init(
             requireContext(),
             "pk_test_51KM3QZG6zQNEntYYBTviK5vbbI0sloSqUoJ5ZFcpcjkApfD83KE53soTFIBYqZDWNqfRnGJvOvQmw3AmVRVojCPq00XmTq9dLN"
-        );/*
-        //mBinding.btnPay.setEnabled(false)
-        requireActivity().runOnUiThread {
-            payment!!.paymentSheet = PaymentSheet(
-                this
-            ) { paymentSheetResult: PaymentSheetResult ->
-                payment!!.onPaymentSheetResult(
-                    paymentSheetResult
-                )
-            }
-        }
-        requireActivity().runOnUiThread {    payment!!.fetchPaymentIntent()}*/
-
-        // Hook up the pay button
+        );
 
         mBinding.btnPay.setOnClickListener {
-
-            onPayClicked()
-            //initPasarela()
+            pay()
         }
 
-
-
-        mBinding.btnPay.setEnabled(false)
-
-        paymentSheet = PaymentSheet(
-            this
-        ) { paymentSheetResult: PaymentSheetResult? ->
-            onPaymentSheetResult(
-                paymentSheetResult!!
-            )
-        }
-
-        fetchPaymentIntent()
-    }
-
-    private fun initPasarela() {
         paymentSheet = PaymentSheet(
             this
         ) { paymentSheetResult: PaymentSheetResult? ->
@@ -117,17 +79,27 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
             )
         }
 
-        fetchPaymentIntent()
-        //onPayClicked()
+        /*paymentSheet = PaymentSheet(
+            this
+        ) { paymentSheetResult: PaymentSheetResult? ->
+            onPaymentSheetResult(
+                paymentSheetResult!!
+            )
+        }*/
 
+        //fetchPaymentIntent()
     }
 
-    private fun getProducts(): List<ItemCar> {
-        return Car.items
+    private fun pay() {
+
+        if (mMainCarVM.amountTotalLD.value!! >= 1.0) {
+            mBinding.progressBar.visibility = View.VISIBLE
+            fetchPaymentIntent()
+        }
+
     }
 
     fun showAlert(title: String, message: String?) {
-
         requireActivity().runOnUiThread {
             val dialog =
                 AlertDialog.Builder(mBinding.root.context)
@@ -138,6 +110,7 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
             dialog.show()
             //dialog.dismiss()
             println(message)
+            mBinding.progressBar.visibility = View.GONE
         }
 
     }
@@ -152,9 +125,10 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
         //val shoppingCartContent = "{\"id\":  ${binding.editText.text.toString()}}"
         //val shoppingCartContent = "{\"totalAmount\":  ${mBinding.tvAmountToPay.text.toString()}}"
 
-        val shoppingCartContent = "{\"totalAmount\":  ${(mMainCarVM.amountTotalLD.value!!*100).toInt()}}"
+        val shoppingCartContent =
+            "{\"totalAmount\":  ${(mMainCarVM.amountTotalLD.value!! * 100).toInt()}}"
 
-        Toast.makeText(mBinding.root.context, shoppingCartContent, Toast.LENGTH_SHORT).show()
+        //Toast.makeText(mBinding.root.context, shoppingCartContent, Toast.LENGTH_SHORT).show()
 
         val requestBody: RequestBody = RequestBody.create(
             "application/json; charset=utf-8".toMediaType(), shoppingCartContent
@@ -168,10 +142,8 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
             .enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     println("El error onFailure  es $e")
-
                     showAlert("Failed to load data", "Error: $e")
                     //showToast("Falló al cargar onFailure")
-
                 }
 
                 @Throws(IOException::class)
@@ -179,6 +151,7 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
                     call: Call,
                     response: Response
                 ) {
+
                     if (!response.isSuccessful) {
                         println("El error onResponse es $response")
 
@@ -187,12 +160,16 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
                             "Error: $response"
                         )
                         //showToast("Falló al cargar")
+                        mBinding.progressBar.visibility = View.GONE
 
                     } else {
                         val responseJson = parseResponse(response.body)
                         paymentIntentClientSecret = responseJson.optString("clientSecret")
                         activity!!.runOnUiThread {
-                            mBinding.btnPay!!.isEnabled = true
+
+                            onPayClicked()
+                            mBinding.progressBar.visibility = View.GONE
+                            //mBinding.btnPay!!.isEnabled = true
 
                         }
 
@@ -221,7 +198,15 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
         val configuration = PaymentSheet.Configuration("Example, Inc.")
 
         // Present Payment Sheet
-        paymentSheet!!.presentWithPaymentIntent(paymentIntentClientSecret!!, configuration)
+        paymentSheet?.let {
+            paymentIntentClientSecret?.let { it1 ->
+                it.presentWithPaymentIntent(
+                    it1,
+                    configuration
+                )
+            }
+        }
+        //paymentSheet!!.presentWithPaymentIntent(paymentIntentClientSecret!!, configuration)
     }
 
     fun onPaymentSheetResult(
