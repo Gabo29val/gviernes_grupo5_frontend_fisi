@@ -30,7 +30,7 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
     private lateinit var mBinding: FragmentMainCarBinding
     private lateinit var mProductAdapter: ProductCarAdapter
     val TAG = "CheckoutActivity"
-    val BACKEND_URL = "http://192.168.0.10:8080/stripe"
+    val BACKEND_URL = "http://192.168.0.106:8080/stripe"
     //val BACKEND_URL = "http://127.0.0.1:8080/stripe"
    // val BACKEND_URL = "http://10.0.2.2:8080/stripe"
     var paymentIntentClientSecret: String? = null
