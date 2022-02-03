@@ -46,4 +46,6 @@ Esta rama contiene el proyecto principal del **frontend** de la aplicación "Min
 
 *   Ahora sí ya puede ejecutar el proyecto del frontend.
 
+### Observación
 
+*   Al ejecutar la aplicación, ya sea en el emulador o en su celular, no debe estar en modo noche.
