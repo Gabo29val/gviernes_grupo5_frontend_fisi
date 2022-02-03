@@ -18,7 +18,7 @@ import java.io.IOException
 class Payment(var amount: String? = "", var payButton: Button, var context: Context) {
     val TAG = "CheckoutActivity"
     //val BACKEND_URL = "http://10.0.2.2:4242"
-    val BACKEND_URL = "http://10.0.2.2:4242"
+    val BACKEND_URL = "http://192.168.0.106:8080"
 
     var paymentIntentClientSecret: String? = null
     var paymentSheet: PaymentSheet? = null

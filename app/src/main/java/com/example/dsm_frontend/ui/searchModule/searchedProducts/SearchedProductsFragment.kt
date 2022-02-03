@@ -1,6 +1,7 @@
 package com.example.dsm_frontend.ui.searchModule.searchedProducts
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
@@ -8,6 +9,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.dsm_frontend.MainActivity
 import com.example.dsm_frontend.R
 import com.example.dsm_frontend.api.RetrofitClient
 import com.example.dsm_frontend.core.Resource
@@ -30,6 +32,8 @@ class SearchedProductsFragment : Fragment(R.layout.fragment_searched_products),
     private lateinit var mBinding: FragmentSearchedProductsBinding
     private lateinit var mProductAdapter: ProductAdapter
     private lateinit var products: ArrayList<Product>
+
+    private var mActivity: MainActivity? = null
 
     private val arg by navArgs<SearchedProductsFragmentArgs>()
 
@@ -55,8 +59,35 @@ class SearchedProductsFragment : Fragment(R.layout.fragment_searched_products),
             setHasFixedSize(true)
         }
 
+        mActivity = activity as? MainActivity
+
         getProductByWord(arg.word)
+        //setupActionBar()
         setupSearchView()
+    }
+
+    private fun setupActionBar() {
+
+        mActivity?.setSupportActionBar(mBinding.toolbar)
+        mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setHasOptionsMenu(true)
+        /*//indicamos que muestre la flecha de retroceso
+        mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true) //back
+        mActivity?.supportActionBar?.setTitle(R.string.edit_store_title_add) //title
+        mActivity?.supportActionBar?.title =
+            if (mIsEditMode) getString(R.string.edit_store_title_edit)
+            else getString(R.string.edit_store_title_add)
+        setHasOptionsMenu(true) //que tenga acceso al menu*/
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                mActivity?.onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun getProductByWord(word: String) {
