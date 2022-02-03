@@ -25,5 +25,5 @@
     <string name="text_btn_eliminar">Quitar todo</string>
     <string name="bottom_navigation_item_title_tiendas">Tiendas</string>
     <string name="info_not_close_stores">No hay tiendas cercanas en este rango.</string>
-    <string name="info_not_time_service">Tiempo agotado. No se pudo acceder al servicio. Inténtelo más tarde</string>
+    <string name="info_not_time_service">Tiempo agotado. No se pudo acceder al servicio.</string>
 </resources>

@@ -25,6 +25,7 @@ import com.example.dsm_frontend.core.Resource
 import com.example.dsm_frontend.data.MinimarketDataSource
 import com.example.dsm_frontend.databinding.FragmentMainStoreBinding
 import com.example.dsm_frontend.data.model.Store
+import com.example.dsm_frontend.databinding.DialogAddCarBinding
 import com.example.dsm_frontend.presentation.StoreViewModel
 import com.example.dsm_frontend.presentation.StoreViewModelFactory
 import com.example.dsm_frontend.repository.MinimarketRepositoryImpl
@@ -35,6 +36,7 @@ import com.google.android.gms.maps.model.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
 class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCallback,
@@ -196,11 +198,12 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
                         }
                         is Resource.Success -> {
                             if (result.data.isEmpty()) {
-                                Toast.makeText(
+                                loadDialogNotStoreClose()
+                                /*Toast.makeText(
                                     mBinding.root.context,
                                     getString(R.string.info_not_close_stores),
                                     Toast.LENGTH_LONG
-                                ).show();
+                                ).show();*/
                             }
                             mBinding.progressBar.visibility = View.GONE
                             mStoreViewModel.updateStores(result.data)
@@ -208,16 +211,45 @@ class MainStoreFragment : Fragment(R.layout.fragment_main_store), OnMapReadyCall
                             //drawMarkerStores(result.data)
                         }
                         is Resource.Failure -> {
-                            Toast.makeText(
+                            loadDialogDesconection()
+                            /*Toast.makeText(
                                 mBinding.root.context,
                                 getString(R.string.info_not_time_service),
                                 Toast.LENGTH_LONG
-                            ).show();
+                            ).show();*/
                             drawMarkerStores(listOf())
                             mBinding.progressBar.visibility = View.GONE
                         }
                     }
                 })
+        }
+    }
+
+    fun loadDialogNotStoreClose() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_not_store_close, null)
+        val binding = DialogAddCarBinding.bind(dialogView)
+
+        val materialAlertDialogBuilder = MaterialAlertDialogBuilder(mBinding.root.context)
+        materialAlertDialogBuilder.setView(dialogView)
+        materialAlertDialogBuilder.setCancelable(false)
+        val dialogBuilder = materialAlertDialogBuilder.show()
+
+        binding.btnOk.setOnClickListener {
+            dialogBuilder.dismiss()
+        }
+    }
+
+    fun loadDialogDesconection() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_desconection, null)
+        val binding = DialogAddCarBinding.bind(dialogView)
+
+        val materialAlertDialogBuilder = MaterialAlertDialogBuilder(mBinding.root.context)
+        materialAlertDialogBuilder.setView(dialogView)
+        materialAlertDialogBuilder.setCancelable(false)
+        val dialogBuilder = materialAlertDialogBuilder.show()
+
+        binding.btnOk.setOnClickListener {
+            dialogBuilder.dismiss()
         }
     }
 
