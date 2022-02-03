@@ -2,6 +2,7 @@ package com.example.dsm_frontend.api
 
 import android.app.Activity
 import android.content.Context
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -15,22 +16,27 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
 
-class Payment(var amount: String? = "", var payButton: Button, var context: Context) {
-    val TAG = "CheckoutActivity"
-    //val BACKEND_URL = "http://10.0.2.2:4242"
-    val BACKEND_URL = "http://192.168.0.106:8080"
+class Payment (var amount:String?="", var payButton:Button, var context:Context){
+     val TAG = "CheckoutActivity"
+     val BACKEND_URL = "http://192.168.0.10/stripe"
+    //val BACKEND_URL = "http://127.0.0.1:8080/stripe"
+     var paymentIntentClientSecret: String? = null
+     lateinit var paymentSheet: PaymentSheet
 
-    var paymentIntentClientSecret: String? = null
-    var paymentSheet: PaymentSheet? = null
 
-    fun showAlert(title: String, message: String?) {
-        val dialog =
-            AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton("Ok", null)
-                .create()
-        dialog.show()
+
+
+     fun showAlert(title: String, message: String?) {
+
+
+             val dialog =
+                 AlertDialog.Builder(context)
+                     .setTitle(title)
+                     .setMessage(message)
+                     .setPositiveButton("Ok", null)
+                     .create()
+             //dialog.show()
+             dialog.dismiss()
 
     }
 
@@ -54,6 +60,8 @@ class Payment(var amount: String? = "", var payButton: Button, var context: Cont
             .newCall(request)
             .enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
+                    println("El error es $e")
+
                     showAlert("Failed to load data", "Error: $e")
                 }
 
@@ -63,7 +71,8 @@ class Payment(var amount: String? = "", var payButton: Button, var context: Cont
                     response: Response
                 ) {
                     if (!response.isSuccessful) {
-                        showAlert(
+                        println("El error es $response")
+                         showAlert(
                             "Failed to load page",
                             "Error: $response"
                         )
