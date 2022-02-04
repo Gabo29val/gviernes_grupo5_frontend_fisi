@@ -19,15 +19,11 @@ import java.io.IOException
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.dsm_frontend.R
-import com.example.dsm_frontend.api.Payment
+import com.example.dsm_frontend.api.RetrofitClient
 import com.example.dsm_frontend.data.model.Car
-import com.example.dsm_frontend.data.model.ItemCar
 import com.example.dsm_frontend.ui.carModule.carrito.adapter.ProductCarAdapter
 import com.example.dsm_frontend.databinding.FragmentMainCarBinding
-import com.example.dsm_frontend.data.model.Product
-import com.example.dsm_frontend.data.model.Specification
 import com.example.dsm_frontend.presentation.MainCarViewModel
-import com.stripe.android.paymentsheet.PaymentSheetResultCallback
 
 class MainCarFragment : Fragment(R.layout.fragment_main_car) {
 
@@ -37,10 +33,8 @@ class MainCarFragment : Fragment(R.layout.fragment_main_car) {
 
 
     val TAG = "CheckoutActivity"
-    val BACKEND_URL = "http://192.168.0.106:8080/stripe"
+    val BACKEND_URL = "http://${RetrofitClient.addressIP}:8080/stripe"
 
-    //val BACKEND_URL = "http://127.0.0.1:8080/stripe"
-    // val BACKEND_URL = "http://10.0.2.2:8080/stripe"
     var paymentIntentClientSecret: String? = null
 
     lateinit var paymentSheet: PaymentSheet
