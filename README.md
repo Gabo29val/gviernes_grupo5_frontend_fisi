@@ -74,45 +74,30 @@ Esta rama contiene el proyecto principal del **frontend** de la aplicación "Min
     
     Ingreso de productos a buscar y resultados de la búsqueda.
     
-    ![busqueda1](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/busqueda1.PNG?alt=media&token=6127985b-a55f-48c9-b99b-27ae25f3fb84)
-    
-    ![busqueda2](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/busqueda2.PNG?alt=media&token=9a588d57-dbcb-471e-9557-806e1109745b)
-    
     ![busqueda3](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/busqueda3.PNG?alt=media&token=3f9b5bc4-3ed6-4b51-ad32-e9d18f11b12c)
 
 *   Información del producto
     
     ![info1](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/info_prod_1.PNG?alt=media&token=1b00d37f-1670-4022-98e1-116426103b7f)
-    
-    ![info2](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/info_prod_2.PNG?alt=media&token=b927a6c7-2643-4b9f-a709-35c224930a8e)
 
 *   Agregar al carrito
     
     ![add car1](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/add_carrito_1.PNG?alt=media&token=453a01a0-5982-4b45-885f-f80fc3ffa5a8)
-    
-    ![add car2](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/add_carrito_2.PNG?alt=media&token=d6906306-8533-44c4-bd98-cea7d2afdb61)
 
 *   Visualizar tiendas cercanas
 
-    ![vis store1](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/visualizar_tiendas_1.PNG?alt=media&token=80efffc3-3b6f-4149-a542-e48dbbc01aa5)
-    
     ![vis store2](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/visualizar_tiendas_2.PNG?alt=media&token=5473c7b2-7924-41ab-b3a6-f1705665410a)
 
 *   Detalles de una tienda
  
     ![det store1](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/detalles_tienda_1.PNG?alt=media&token=b9ee3151-533f-4587-ab32-ea8502a262c4)
-    
-    ![det store2](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/detalles_tienda_2.PNG?alt=media&token=306e8933-353a-449e-84ac-cba83f63a4b8)
 
 *   Visualizar carrito de compras
 
-    ![car1](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/carrito_1.PNG?alt=media&token=7f1912e7-deec-42de-ada5-9699687bf83e)
-    
     ![car2](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/carrito_2.PNG?alt=media&token=afc359b8-04cb-42ee-8e20-a4bfd4cf52a4)
 
 *   Comprar
 
     ![buy1](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/pago_1.PNG?alt=media&token=f315ecaf-679c-4152-8c7b-896a05739fb0)
-    
     ![buy2](https://firebasestorage.googleapis.com/v0/b/minimarket-de-barrio.appspot.com/o/pago_2.PNG?alt=media&token=ae083af5-a918-4dda-8a08-b538b1afad18)
 
